@@ -1,11 +1,14 @@
 import Card from "./Card"
-import data from "./data"
+import { useUserContext } from "./ContextUser"
 export default function ListCard(){
+    
+    const { user } = useUserContext();
+
     return(
         <div>
-            {console.log(data)}
+            {console.log(user.locationData)}
             {
-                data.map((data) => (
+                user && user.locationData && user.locationData.map((data) => (
                     <Card data={data} />
                 ))
             }

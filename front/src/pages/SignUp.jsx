@@ -18,7 +18,7 @@ export default function SignUp() {
     watch,
   } = useForm();
   const [ typeUser, setTypeUser ] = useState("");
-  const { setUser } = useUserContext();
+  const { user, setUser } = useUserContext();
   const BASE_URL = "http://localhost:3001/";
   // "https://chat-socket-eb53a2dd15bb.herokuapp.com/" ||
   const navigate = useNavigate();
@@ -33,16 +33,21 @@ export default function SignUp() {
       email: email,
       password: password,
       typeUser: typeUser,
+      locationData: []
     };
     //console.log(data);
     setUser(data);
+    console.log(user);
 
-    navigate("/home");
+    if(typeUser === "cliente"){
+      navigate("/home");
+    }else{
+      navigate("/create-location");
+    }
   };
 
   const handleClick = (text) => {
     setTypeUser(text);
-
   };
 
   return (
