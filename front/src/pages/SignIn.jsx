@@ -17,7 +17,7 @@ export default function SignIn() {
   const { user, setUser } = useUserContext();
   const navigate = useNavigate();
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     navigate("/home");
     const email = watch("email");
     const password = watch("password");
@@ -25,7 +25,17 @@ export default function SignIn() {
       email: email,
       password: password,
     };
-    setUser(data);
+    try{
+      const response = await axios.post("http://localhost:3001/user", data);
+      if(response.status === 200){
+        setUser(response.data.user);
+        navigate("/home");
+      }else{
+        alert("Usuário e/ou senha incorretos");
+      }
+    }catch(e){
+      console.error(e);
+    }
   };
 
   return (

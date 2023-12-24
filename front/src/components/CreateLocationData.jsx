@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "./ContextUser";
+import axios from "axios";
 
 export default function CreateLocationData() {
   const {
@@ -12,13 +13,20 @@ export default function CreateLocationData() {
   const navigate = useNavigate();
   const { user, setUser } = useUserContext();
   const onSubmit = (data) => {
-    console.log(data);
-
-    setUser({
-      ...user,
-      locationData: [...user.locationData, data],
-    });
-    navigate("/home");
+    
+    const response = axios.post("http://localhost:3001/locals", data)
+      .catch((err) => console.error("Deu o seguinte erro na requisição API: " + err))
+    
+    if(response.status === 201){
+      setUser({
+        ...user,
+        locationData: [...user.locationData, data],
+      });
+      navigate("/home");
+    }else{
+      alert("Sua criação foi inválida");
+    }
+    
   };
 
   return (

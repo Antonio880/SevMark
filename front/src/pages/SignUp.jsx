@@ -23,7 +23,7 @@ export default function SignUp() {
   // "https://chat-socket-eb53a2dd15bb.herokuapp.com/" ||
   const navigate = useNavigate();
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const email = watch("email");
     const password = watch("password");
     const username = watch("username");
@@ -33,16 +33,20 @@ export default function SignUp() {
       email: email,
       password: password,
       typeUser: typeUser,
-      locationData: []
     };
-    //console.log(data);
-    setUser(data);
-    console.log(user);
 
-    if(typeUser === "cliente"){
-      navigate("/home");
-    }else{
-      navigate("/create-location");
+    const response = await axios.post(`${BASE_URL}users`, data);
+    console.log(response);
+    
+    if(response.status === 409){
+      alert("Usuário ja Existe");
+    }else if(response.status === 201){
+      setUser(data);
+      if(typeUser === "cliente"){
+        navigate("/home");
+      }else{
+        navigate("/create-location");
+      }
     }
   };
 
