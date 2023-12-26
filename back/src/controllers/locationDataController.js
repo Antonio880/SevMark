@@ -4,7 +4,7 @@ import { local } from "../models/locationData.js";
 class LocationDataController {
   static async listLocationData(req, res) {
     try {
-      let json = { error: '', result: [] };
+      let json = { result: [] };
 
       // Obtenha os dados de localização
       let locationDataList = await local.find();

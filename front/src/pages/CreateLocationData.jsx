@@ -1,0 +1,238 @@
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../components/ContextUser";
+import axios from "axios";
+
+export default function CreateLocationData() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+  const navigate = useNavigate();
+  const { user, setUser } = useUserContext();
+  const [sports, setSports] = useState([]);
+
+  const onSubmit = async (data) => {
+    const dataWithUserId = { ...data, usuario_id: user.id };
+    dataWithUserId.price = Number(data.price);
+    console.log(dataWithUserId);
+    const response = await axios.post("http://localhost:3001/locals", dataWithUserId)
+      .catch((err) => console.error("Deu o seguinte erro na requisição API: " + err))
+    console.log(response);
+    if (response.status === 201) {
+      setUser({
+        ...user,
+        locationData: [...user.locationData, dataWithUserId],
+      });
+      navigate("/home");
+    } else {
+      alert("Sua criação foi inválida");
+    }
+
+  };
+
+  const handleClickSports = (event) => {
+    const sport = event.target.value;
+    setSports((prevSports) => [...prevSports, sport]);
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="pt-4">
+          <div className="border-b border-gray-900/10 pb-12">
+            <h2 className="flex justify-center text-base font-semibold leading-7 text-gray-900">
+              Cadastro do Local para ser Alugado
+            </h2>
+
+            <div className="mt-10 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div className="sm:col-span-4">
+                <label
+                  for="name"
+                  className="flex justify-center text-sm font-medium leading-6 text-gray-900"
+                >
+                  Nome do Local
+                </label>
+                <div className="mt-2 flex justify-center">
+                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-orange-500 sm:max-w-md">
+                    <input
+                      type="text"
+                      name="locationName"
+                      id="locationName"
+                      autoComplete="locationName"
+                      className="flex-1 border-0 w-60 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                      {...register("name", {
+                        required: "Campo obrigatório",
+                      })}
+                    />
+                  </div>
+                </div>
+                {errors.locationName && (
+                  <p className="text-red-500  flex justify-center">{errors.locationName.message}</p>
+                )}
+              </div>
+
+              <div className="flex flex-row justify-center">
+                <div>
+                  <div className="sm:col-span-4">
+                    <label
+                      for="price"
+                      className="text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Preço por Hora
+                    </label>
+                    <div className="mt-2">
+                      <div className="flex rounded-md w-28 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-orange-500 sm:max-w-md">
+                        <input
+                          type="text"
+                          name="price"
+                          id="price"
+                          autoComplete="price"
+                          className="flex-1 border-0 w-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                          {...register("price", { required: "Campo obrigatório" })}
+                        // onChange={formatarPreco}
+                        />
+                      </div>
+                      {errors.price && (
+                        <p className="text-red-500">{errors.price.message}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-4">
+                    <label
+                      for="price"
+                      className="text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Endereço
+                    </label>
+                    <div className="mt-2">
+                      <div className="flex rounded-md w-80 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-orange-500 sm:max-w-md">
+                        <input
+                          type="text"
+                          name="price"
+                          id="price"
+                          autoComplete="price"
+                          className="flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                          {...register("description", { required: "Campo obrigatório" })}
+                        // onChange={formatarPreco}
+                        />
+                      </div>
+                      {errors.location && (
+                        <p className="text-red-500">{errors.location.message}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex my-2 pl-20">
+                    <label htmlFor="sport" className="flex items-center my-2 pr-3 text-sm font-medium text-gray-900">
+                      Sport:
+                    </label>
+                    <select
+                      id="sport"
+                      className={` bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-200 focus:border-orange-200 p-2.5`}
+                      {...register("sport")}
+                      onChange={handleClickSports}
+                    >
+                      <option defaultValue={""}>Choose a Sport</option>
+                      <option value="Vôlei">Vôlei</option>
+                      <option value="Futebol">Futebol</option>
+                      <option value="Futevôlei">Futevôlei</option>
+                      <option value="Beach Tennis">Beach Tennis</option>
+                    </select>
+                  </div>
+                  <div htmlFor="sports" className="flex items-center justify-center flex-wrap px-4 w-[400px] my-2 text-sm font-medium text-gray-900">
+                    {sports &&
+                      sports.map((sport, index) => (
+                        <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md mx-1 mb-2 px-2" key={index}>{sport}</div>
+                      ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-44 col-span-full">
+                <label
+                  for="about"
+                  className=" text-sm font-medium leading-6 text-gray-900"
+                >
+                  Obs
+                </label>
+                <div className="mt-2">
+                  <textarea
+                    id="about"
+                    name="about"
+                    rows="3"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    {...register("obs")}
+                  ></textarea>
+                </div>
+              </div>
+              <div className="px-44">
+                <label
+                  for="cover-photo"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Cover photo
+                </label>
+                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                  <div className="text-center">
+                    <svg
+                      className="mx-auto h-12 w-12 text-gray-300"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                      <label
+                        htmlFor="file-upload"
+                        className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                      >
+                        <span>Upload a file</span>
+                        <input
+                          id="file-upload"
+                          name="file-upload"
+                          type="file"
+                          className="sr-only"
+                        />
+                      </label>
+                      <p className="pl-1">or drag and drop</p>
+                    </div>
+                    <p className="text-xs leading-5 text-gray-600">
+                      PNG, JPG, GIF up to 10MB
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 mr-44 flex items-center justify-end gap-x-6">
+              <button
+                type="button"
+                className="text-sm font-semibold leading-6 text-gray-900"
+                onClick={() => navigate("/home")}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="rounded-md bg-orange-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+}

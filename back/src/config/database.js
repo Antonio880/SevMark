@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
 
 connection.connect((error) => {
   if(error) throw error;
-  console.log("Connection to database Users");
+  console.log("Connection to database SevMark");
 })
 
 export default connection;

@@ -2,14 +2,13 @@ import { useUserContext } from "../components/ContextUser"
 import SearchBar from "../components/SearchBar";
 import ListCard from "../components/ListCard";
 import SelectSports from "../components/SelectSports";
-import CreateLocationData from "../components/CreateLocationData";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import AddButton from "../components/AddButton";
 
 export default function Home(){
     
     const { user, setUser } = useUserContext();
-
+    const { register } = useForm();
     return(
         <div>
             <div>
@@ -17,7 +16,7 @@ export default function Home(){
                     <SearchBar />
                 </div>
                 <div className="flex justify-center">
-                    <SelectSports />
+                    <SelectSports register={register} />
                 </div>
                 <div className="flex justify-center">
                     <ListCard />
