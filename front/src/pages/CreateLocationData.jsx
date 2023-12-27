@@ -13,31 +13,83 @@ export default function CreateLocationData() {
   } = useForm();
   const navigate = useNavigate();
   const { user, setUser } = useUserContext();
-  const [sports, setSports] = useState([]);
+  const [selectedSports, setSelectedSports] = useState([]);
+  const [sportsOptions, setSportsOptions] = useState([]);
+
+  useEffect(() => {
+    setSportsOptions([
+      {
+        id: 1,
+        name: "Vôlei"
+      },
+      {
+        id: 2,
+        name: "Futebol"
+      },
+      {
+        id: 3,
+        name: "Futevôlei"
+      },
+      {
+        id: 4,
+        name: "BeachTennis"
+      },
+    ])
+  }, []);
+
+  const searchSportsSelected = (array) => {
+    const arraySports = [];
+    
+    selectedSports.map((sportId) => (
+        arraySports.push(sportsOptions.find((sport) => sport.id == sportId)?.name) 
+    ))}
+    console.log(arraySports);
+    return arraySports;
+  }
 
   const onSubmit = async (data) => {
     const dataWithUserId = { ...data, usuario_id: user.id };
     dataWithUserId.price = Number(data.price);
-    console.log(dataWithUserId);
-    const response = await axios.post("http://localhost:3001/locals", dataWithUserId)
-      .catch((err) => console.error("Deu o seguinte erro na requisição API: " + err))
-    console.log(response);
-    if (response.status === 201) {
-      setUser({
-        ...user,
-        locationData: [...user.locationData, dataWithUserId],
-      });
-      navigate("/home");
-    } else {
-      alert("Sua criação foi inválida");
+    
+    try {
+      const response = await axios.post("http://localhost:3001/locals", dataWithUserId);
+
+      if (response.status === 201) {
+        setUser({
+          ...user,
+          locationData: [...user.locationData, dataWithUserId],
+        });
+        navigate("/home");
+      } else {
+        alert("Sua criação foi inválida");
+      }
+    } catch (error) {
+      console.error("Deu o seguinte erro na requisição API:", error);
+      alert("Erro ao criar o local");
     }
-
   };
 
-  const handleClickSports = (event) => {
-    const sport = event.target.value;
-    setSports((prevSports) => [...prevSports, sport]);
+  const handleSelectSports = (event) => {
+    const selectedSportId = event.target.value;
+
+    if (!selectedSports.includes(selectedSportId)) {
+      setSelectedSports([...selectedSports, selectedSportId]);
+    }
   };
+
+  useEffect(() => {
+    console.log(selectedSports);
+  }, [selectedSports]);
+
+  const handleRemoveSport = (sportId) => {
+    const updatedSports = selectedSports.filter((id) => id !== sportId);
+    setSelectedSports(updatedSports);
+  };
+
+  // const getSportNameById = (sportId) => {
+  //   const selectedSport = sportsOptions.find((sport) => sport.id === sportId);
+  //   return selectedSport ? selectedSport.name : "";
+  // };
 
   return (
     <div>
@@ -129,7 +181,7 @@ export default function CreateLocationData() {
                 </div>
 
                 <div>
-                  <div className="flex my-2 pl-20">
+                  <div className="flex my-3 pl-20">
                     <label htmlFor="sport" className="flex items-center my-2 pr-3 text-sm font-medium text-gray-900">
                       Sport:
                     </label>
@@ -137,19 +189,25 @@ export default function CreateLocationData() {
                       id="sport"
                       className={` bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-200 focus:border-orange-200 p-2.5`}
                       {...register("sport")}
-                      onChange={handleClickSports}
+                      onChange={handleSelectSports}
                     >
                       <option defaultValue={""}>Choose a Sport</option>
-                      <option value="Vôlei">Vôlei</option>
-                      <option value="Futebol">Futebol</option>
-                      <option value="Futevôlei">Futevôlei</option>
-                      <option value="Beach Tennis">Beach Tennis</option>
+                      {sportsOptions && sportsOptions.map((sport) => (
+                        <option key={sport.id} value={sport.id}>
+                          {sport.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div htmlFor="sports" className="flex items-center justify-center flex-wrap px-4 w-[400px] my-2 text-sm font-medium text-gray-900">
-                    {sports &&
-                      sports.map((sport, index) => (
-                        <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md mx-1 mb-2 px-2" key={index}>{sport}</div>
+                    {selectedSports.length > 0 &&
+                      selectedSports.map((sportId, index) => (
+                        <div className="flex bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md mx-1 mb-2 px-2 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-60 duration-200 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" key={index}>
+                          {sportsOptions.find((sport) => sport.id == sportId)?.name}
+                          <div className="w-5 flex pl-2 items-center">
+                            <img src="xIcon.png" alt="fecha icone" onClick={() => {handleRemoveSport(sportId)}} />
+                          </div>
+                        </div>
                       ))}
                   </div>
                 </div>
