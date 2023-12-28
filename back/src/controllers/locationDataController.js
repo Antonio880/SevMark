@@ -1,5 +1,6 @@
 // Importe o modelo "local"
 import { local } from "../models/locationData.js";
+import { sport } from "../models/sport.js";
 
 class LocationDataController {
   static async listLocationData(req, res) {
@@ -43,6 +44,41 @@ class LocationDataController {
       res.status(201).json({ message: 'Created successfully', local: newLocationData });
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Failed to create location data` });
+    }
+  }
+
+  static async findLocationByName(req, res) {
+    try {
+      const nome = req.query.name;
+      const locationDataFound = await local.findOne({ locationName: nome });
+  
+      if (locationDataFound) {
+        res.status(200).json(locationDataFound);
+      } else {
+        res.status(404).json({ message: 'Local not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: `${error.message} - Failed to retrieve location data` });
+    }
+  }
+
+  static async getLocationsBySport(req, res) {
+    try {
+      const sportName = req.query.sportName;
+
+      // Consulta SQL para obter locais associados a um esporte específico
+      const query = `
+        SELECT locations.*
+        FROM locations
+        INNER JOIN sports ON locations.id = sports.local_id
+        WHERE sports.name = ?;
+      `;
+
+      const locations = await sport.query(query, [sportName]);
+
+      res.status(200).json(locations);
+    } catch (error) {
+      res.status(500).json({ message: `${error.message} - Failed to retrieve locations` });
     }
   }
 

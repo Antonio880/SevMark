@@ -23,6 +23,22 @@ class SportController {
           res.status(500).json({ message: `${error.message} - Failed to create a new Sport` });
         }
       }
+
+      static async findSportByLocalId(req, res) {
+        try {
+          const local_id = req.query.id;
+          const sports = await sport.findOne({ local_id: local_id });
+      
+          if (sports.length > 0) {
+            res.status(200).json(sports);
+          } else {
+            res.status(404).json({ message: 'Sports not found for the specified local_id' });
+          }
+        } catch (error) {
+          res.status(500).json({ message: `${error.message} - Failed to retrieve sports data` });
+        }
+      }
+    
 }
 
 export default SportController;

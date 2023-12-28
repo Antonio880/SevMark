@@ -52,19 +52,28 @@ export default function CreateLocationData() {
       const response = await axios.post("http://localhost:3001/locals", dataWithUserId);
       
       if (response.status === 201) {
-        console.log(response.data);
-        selectedSports.map(async (sportName) => {
-          const dataSport = {
-            name: sportName,
-            local_id: response.data.local.id
-          }
+        const returnLocal = await axios.get(`http://localhost:3001/locals/busca?name=${dataWithUserId.locationName}`)
+          .catch(err => console.error(err));
+        
+        console.log(returnLocal);
+        const createSportPromises = selectedSports.map(async (sportId) => {
+          const selectedSport = sportsOptions.find((sport) => sport.id == sportId);
+        
+          if (selectedSport) {
+            const dataSport = {
+              name: selectedSport.name,
+              local_id: returnLocal.data.id,
+            };
 
-          await axios.post("http://localhost:3001/sports", dataSport);
-        })
-        setUser({
-          ...user,
-          locationData: [...user.locationData, dataWithUserId],
+            // Requisição para criar o esporte associado ao local
+            await axios.post("http://localhost:3001/sports", dataSport);
+          }
         });
+        
+        // setUser({
+        //   ...user,
+        //   locationData: [...user.locationData, dataWithUserId],
+        // });
         navigate("/home");
       } else {
         alert("Sua criação foi inválida");
@@ -83,19 +92,10 @@ export default function CreateLocationData() {
     }
   };
 
-  useEffect(() => {
-    console.log(selectedSports);
-  }, [selectedSports]);
-
   const handleRemoveSport = (sportId) => {
     const updatedSports = selectedSports.filter((id) => id !== sportId);
     setSelectedSports(updatedSports);
   };
-
-  // const getSportNameById = (sportId) => {
-  //   const selectedSport = sportsOptions.find((sport) => sport.id === sportId);
-  //   return selectedSport ? selectedSport.name : "";
-  // };
 
   return (
     <div>
