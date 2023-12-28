@@ -15,6 +15,14 @@ class SportController {
     
         res.json(json);
       }
+      static async createSport(req, res) {
+        try {
+          const newSport = await sport.create(req.body);
+          res.status(201).json({ message: 'Created successfully', sport: newSport });
+        } catch (error) {
+          res.status(500).json({ message: `${error.message} - Failed to create a new Sport` });
+        }
+      }
 }
 
 export default SportController;

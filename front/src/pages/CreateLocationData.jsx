@@ -37,24 +37,30 @@ export default function CreateLocationData() {
     ])
   }, []);
 
-  const searchSportsSelected = (array) => {
-    const arraySports = [];
-    
-    selectedSports.map((sportId) => (
-        arraySports.push(sportsOptions.find((sport) => sport.id == sportId)?.name) 
-    ))}
-    console.log(arraySports);
-    return arraySports;
-  }
-
   const onSubmit = async (data) => {
-    const dataWithUserId = { ...data, usuario_id: user.id };
+    const dataWithUserId = { 
+      locationName: data.locationName,
+      price: data.price,
+      description: data.description,
+      obs: data.obs,
+      usuario_id: user.id
+     };
     dataWithUserId.price = Number(data.price);
+    console.log(data.sport)
     
     try {
       const response = await axios.post("http://localhost:3001/locals", dataWithUserId);
-
+      
       if (response.status === 201) {
+        console.log(response.data);
+        selectedSports.map(async (sportName) => {
+          const dataSport = {
+            name: sportName,
+            local_id: response.data.local.id
+          }
+
+          await axios.post("http://localhost:3001/sports", dataSport);
+        })
         setUser({
           ...user,
           locationData: [...user.locationData, dataWithUserId],
@@ -116,7 +122,7 @@ export default function CreateLocationData() {
                       id="locationName"
                       autoComplete="locationName"
                       className="flex-1 border-0 w-60 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                      {...register("name", {
+                      {...register("locationName", {
                         required: "Campo obrigatório",
                       })}
                     />
@@ -188,7 +194,7 @@ export default function CreateLocationData() {
                     <select
                       id="sport"
                       className={` bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-200 focus:border-orange-200 p-2.5`}
-                      {...register("sport")}
+                      {...register("sport", { required: "Campo obrigatório" })}
                       onChange={handleSelectSports}
                     >
                       <option defaultValue={""}>Choose a Sport</option>
