@@ -45,7 +45,7 @@ export default function SelectSports({ handleSelectSports, handleRemoveSport, se
                 <div className="flex items-center bg-gray-50 mt-2 border border-gray-300 text-gray-900 text-sm rounded-md mx-1 mb-2 px-2 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-60 duration-200 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
                     {selectedSport}
                     <div className="w-5 flex pl-2 items-center">
-                        <img src="xIcon.png" alt="fecha icone" onClick={() => {handleRemoveSport}} />
+                        <img src="xIcon.png" alt="fecha icone" onClick={() => {handleRemoveSport()}} />
                     </div>
                 </div>
             }

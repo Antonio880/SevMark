@@ -162,7 +162,7 @@ export default function CreateLocationData() {
 
                   <div className="sm:col-span-4">
                     <label
-                      for="price"
+                      htmlFor="price"
                       className="text-sm font-medium leading-6 text-gray-900"
                     >
                       Endereço

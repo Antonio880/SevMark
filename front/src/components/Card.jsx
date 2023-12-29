@@ -8,8 +8,7 @@ export default function Card({ data }){
     useEffect(() => {
       async function fetchSports() {
         try{
-          const response = await axios.get(`http://localhost:3001/sports/busca?id=${id}`)
-          console.log(response.data);
+          const response = await axios.get(`http://localhost:3001/sports/busca?id=${id}`);
           setSports(response.data);
         }catch(err){
           console.error(err);
@@ -27,9 +26,9 @@ export default function Card({ data }){
             <p className="flex items-center justify-center text-sm font-semibold leading-6 text-gray-900">{locationName}</p>
             <p className="flex items-center justify-center truncate text-xs leading-5 text-gray-500">{description}</p>
           </div>
-          <div className="">
+          <div className="pr-8">
             <p className="flex items-center pt-8 justify-center text-base font-semibold leading-6 text-gray-700"><strong>{price}</strong></p>
-            <div className="flex flex-wrap">
+            <div className="flex justify-center flex-wrap">
               {sports.length > 0 &&
                 sports.map((sport, index) => (
                   <div className="flex bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md mx-1 mb-1 px-1 " key={index}>

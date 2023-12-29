@@ -64,14 +64,14 @@ class LocationDataController {
 
   static async getLocationsBySport(req, res) {
     try {
-      const sportName = req.query.sportName;
+      const sportName = req.query.name;
 
       // Consulta SQL para obter locais associados a um esporte específico
       const query = `
-        SELECT locations.*
-        FROM locations
-        INNER JOIN sports ON locations.id = sports.local_id
-        WHERE sports.name = ?;
+        SELECT local.*
+        FROM local
+        INNER JOIN sport ON local.id = sport.local_id
+        WHERE sport.name = ?;
       `;
 
       const locations = await sport.query(query, [sportName]);
