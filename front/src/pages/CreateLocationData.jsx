@@ -12,7 +12,8 @@ export default function CreateLocationData() {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
-  const { user, setUser } = useUserContext();
+  const [inputValue, setInputValue] = useState('');
+  const { user } = useUserContext();
   const [selectedSports, setSelectedSports] = useState([]);
   const [sportsOptions, setSportsOptions] = useState([]);
 
@@ -69,11 +70,7 @@ export default function CreateLocationData() {
             await axios.post("http://localhost:3001/sports", dataSport);
           }
         });
-        
-        // setUser({
-        //   ...user,
-        //   locationData: [...user.locationData, dataWithUserId],
-        // });
+     
         navigate("/home");
       } else {
         alert("Sua criação foi inválida");
@@ -95,6 +92,23 @@ export default function CreateLocationData() {
   const handleRemoveSport = (sportId) => {
     const updatedSports = selectedSports.filter((id) => id !== sportId);
     setSelectedSports(updatedSports);
+  };
+
+  const handlePriceChange = (event) => {
+    const rawValue = event.target.value;
+
+    // Remove todos os caracteres não numéricos
+    const numericValue = rawValue.replace(/[^0-9]/g, '');
+
+    // Formate o valor numérico
+    const formattedValue = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+    }).format(Number(numericValue) / 100);
+
+    // Atualize o estado com o valor formatado
+    setInputValue(formattedValue);
   };
 
   return (
@@ -151,7 +165,8 @@ export default function CreateLocationData() {
                           autoComplete="price"
                           className="flex-1 border-0 w-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                           {...register("price", { required: "Campo obrigatório" })}
-                        // onChange={formatarPreco}
+                          value={inputValue}
+                          onChange={handlePriceChange}
                         />
                       </div>
                       {errors.price && (

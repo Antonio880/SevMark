@@ -54,7 +54,10 @@ export default function Home() {
     setSelectedSport("");
     axios
       .get("http://localhost:3001/locals")
-      .then((response) => setLocationData(response.data))
+      .then((response) => {
+        setLocationData(response.data.result);
+        console.log(response.data);
+      })
       .catch((err) => {
         console.log(err);
         alert(err);
