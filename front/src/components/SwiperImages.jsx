@@ -19,6 +19,10 @@ export default function SwiperImages({ fotos }) {
         navigation={true}
         modules={[Pagination, Navigation]}
         className="h-[250px] rounded-md"
+        style={{
+          "--swiper-pagination-color": "#fdba74",
+          "--swiper-navigation-color": "#fdba74"
+        }}
       >
         <SwiperSlide>
           <div className="flex justify-center">

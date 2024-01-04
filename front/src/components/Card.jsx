@@ -6,6 +6,7 @@ export default function Card({ data }) {
   const { locationName, description, price, id } = data;
   const [sports, setSports] = useState([]);
   const [showDisplayMark, setShowDisplayMark] = useState(false);
+  
 
   useEffect(() => {
     async function fetchSports() {
@@ -21,16 +22,17 @@ export default function Card({ data }) {
 
     fetchSports();
   }, []);
+
+  
+
   return (
+    <div>
     <div
       className="relative mt-5 rounded-md w-[800px] flex shadow-md bg-slate-100 leading-6 transition ease-in-out cursor-pointer delay-150 hover:-translate-y-1 hover:scale-70 hover:bg-slate-200 duration-200 focus-visible:outline focus-visible:outline-2"
       onClick={() => {
-        setShowDisplayMark(true);
+        setShowDisplayMark(!showDisplayMark);
       }}
     >
-      {showDisplayMark ? (
-        <DisplayMark data={data} sports={sports} />
-      ) : (
         <>
           <div className="">
             <img
@@ -67,7 +69,12 @@ export default function Card({ data }) {
             <img src="./seta.png" alt="img seta" />
           </div>
         </>
-      )}
+    </div>
+    {
+        showDisplayMark && (
+          <DisplayMark data={data} setShowDisplayMark={setShowDisplayMark} />
+        )
+      }
     </div>
   );
 }

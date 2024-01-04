@@ -1,21 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import SwiperImages from "./SwiperImages";
-export default function DisplayMark({ data, sports }) {
-  const { locationName, description, price, obs } = data;
-
+import SchedulePicker from "./SchedulePicker";
+export default function DisplayMark({ data, setShowDisplayMark }) {
+  const { obs } = data;
   const fotos = ["quadra_unifor.jpg", "quadra.jpg"];
-
+ 
   return (
-    <div className="h-[500px]">
+    <div className="h-[772px] py-2 bg-slate-100 rounded-md">
       <SwiperImages fotos={fotos} />
-      <div className="flex flex-row">
-        <div className="basis-1/2 grid grid-cols-1 divide-y">
-          <h2 className="flex justify-center py-3"><strong>{locationName}</strong></h2>
-          <h3 className="flex justify-center py-3 overflow-x-auto">Endereço: {description}</h3>
+      <div className="flex flex-col">
+        <div className="h-16 overflow-y-auto px-8 py-2">
+          Observações Adicionais: {obs}
         </div>
-        <div className="basis-1/2 grid grid-cols-1 divide-y">
-          <h3 className="text-base flex justify-center pt-3">Preço: {price}</h3>
-        </div>
+        <div>
+          <SchedulePicker setShowDisplayMark={setShowDisplayMark} />
+        </div>      
       </div>
     </div>
   );

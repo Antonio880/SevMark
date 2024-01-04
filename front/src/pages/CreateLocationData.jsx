@@ -13,6 +13,7 @@ export default function CreateLocationData() {
   } = useForm();
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
+  const [ price, setPrice ] = useState(0);
   const { user } = useUserContext();
   const [selectedSports, setSelectedSports] = useState([]);
   const [sportsOptions, setSportsOptions] = useState([]);
@@ -81,6 +82,10 @@ export default function CreateLocationData() {
     }
   };
 
+  useEffect(() => {
+    console.log(price);
+  }, [inputValue])
+
   const handleSelectSports = (event) => {
     const selectedSportId = event.target.value;
 
@@ -96,7 +101,7 @@ export default function CreateLocationData() {
 
   const handlePriceChange = (event) => {
     const rawValue = event.target.value;
-
+    setPrice(event.target.value);
     // Remove todos os caracteres não numéricos
     const numericValue = rawValue.replace(/[^0-9]/g, '');
 
