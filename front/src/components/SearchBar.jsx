@@ -2,7 +2,7 @@ import { TextField, Button } from "@mui/material";
 
 export default function SearchBar() {
   return (
-    <div className="flex pt-10">
+    <div className="flex pt-7">
       <TextField
         id="outlined-basic"
         label="Procure Aqui"

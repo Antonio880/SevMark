@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import SwiperImages from "./SwiperImages";
 import SchedulePicker from "./SchedulePicker";
 export default function DisplayMark({ data, setShowDisplayMark }) {
-  const { obs } = data;
+  const { obs, id } = data;
   const fotos = ["quadra_unifor.jpg", "quadra.jpg"];
  
   return (
@@ -10,10 +10,14 @@ export default function DisplayMark({ data, setShowDisplayMark }) {
       <SwiperImages fotos={fotos} />
       <div className="flex flex-col">
         <div className="h-16 overflow-y-auto px-8 py-2">
-          Observações Adicionais: {obs}
+          {
+            obs && (
+              <p className="pt-1">Observações Adicionais: {obs}</p>
+            )
+          }
         </div>
         <div>
-          <SchedulePicker setShowDisplayMark={setShowDisplayMark} />
+          <SchedulePicker setShowDisplayMark={setShowDisplayMark} id={id} />
         </div>      
       </div>
     </div>
