@@ -5,7 +5,7 @@ class UserController {
     let json = {error:'', result: []};
 
     let users = await user.find();
-
+    
     for(let i in users){
       json.result.push({
         id: users[i].id,

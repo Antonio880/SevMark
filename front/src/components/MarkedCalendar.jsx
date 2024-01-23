@@ -29,25 +29,33 @@ export default function MarkedCalendar({}) {
       };
 
     const handleDayClick = (day) => {
-      console.log("1");
       if (selectedDay) {
         setSelectedDay(null);
-        console.log("1");
       } else {
-        console.log("1");
         // Filtrar os clocks para o dia selecionado
         const clocksForSelectedDay = dayMarked
-          .filter((markedDay) => markedDay.shortDay === day.shortDay)
-          .map((markedDay) => markedDay.time);
-        
-        setClockForDay(clocksForSelectedDay);
+          .filter((markedDay) => markedDay.shortDay === day)
+      
+        setClockForDay(() => {
+          const times = [];
+          for (let i = 0; i < clocksForSelectedDay.length; i++) {
+            // console.log()
+            const time = {
+              hour: clocksForSelectedDay[i].hour, 
+              local_id: clocksForSelectedDay[i].local_id, 
+              usuario_id: clocksForSelectedDay[i].usuario_id
+            }
+            times.push(time);
+          }
+          return times;
+        });
         setSelectedDay(day);
       }
     };
 
-    useEffect(() => {
-      console.log(clockForDay);
-    },[selectedDay])
+    // useEffect(() => {
+    //   console.log(dayMarked);
+    // },[dayMarked])
 
     useEffect(() => {
       const fetchMarksSelecteds = async () => {
@@ -101,6 +109,7 @@ const renderTimeSlots = (
         <ClockMarked
           key={time}
           time={time}
+          clockForDay={clockForDay}
         />
       );
   

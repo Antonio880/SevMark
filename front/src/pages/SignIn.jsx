@@ -26,15 +26,17 @@ export default function SignIn() {
       password: password,
     };
     try{
-      const response = await axios.post("http://localhost:3001/user", data);
+      const response = await axios.post("http://localhost:3001/user", data)
+        .catch(() => alert("Usuário não Existente"));
+      
       if(response.status === 200){
         setUser(response.data.user);
         navigate("/home");
-      }else{
+      }else if(response.status == 400){
         alert("Usuário e/ou senha incorretos");
       }
     }catch(e){
-      console.error(e);
+      console.error(e + "teste");
     }
   };
 

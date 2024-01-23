@@ -9,10 +9,10 @@ export default function DisplayMark({ data, setShowDisplayMark }) {
     <div className="h-[772px] py-2 bg-slate-100 rounded-md">
       <SwiperImages fotos={fotos} />
       <div className="flex flex-col">
-        <div className="h-16 overflow-y-auto px-8 py-2">
+        <div className="h-16 overflow-y-auto px-1 pt-4">
           {
             obs && (
-              <p className="pt-1">Observações Adicionais: {obs}</p>
+              <p className="overflow-x-auto">Observações Adicionais: {obs}</p>
             )
           }
         </div>

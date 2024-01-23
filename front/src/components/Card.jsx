@@ -23,8 +23,6 @@ export default function Card({ data }) {
     fetchSports();
   }, []);
 
-  
-
   return (
     <div>
     <div

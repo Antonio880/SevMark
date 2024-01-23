@@ -3,7 +3,7 @@ import db from "../config/database.js";
 const mark = {
   find: async () => {
     return new Promise((resolve, reject) => {
-      db.query('SELECT * FROM mark', (error, results) => {
+      db.query('SELECT * FROM marks', (error, results) => {
         if (error) {
           reject(error);
         } else {
@@ -14,7 +14,7 @@ const mark = {
   },
   findById: async (id) => {
     return new Promise((resolve, reject) => {
-      db.query('SELECT * FROM mark WHERE id = ?', [id], (error, results) => {
+      db.query('SELECT * FROM marks WHERE id = ?', [id], (error, results) => {
         if (error) {
           reject(error);
         } else {
@@ -26,7 +26,7 @@ const mark = {
   findOne: async (conditions) => {
     const keys = Object.keys(conditions);
     const values = Object.values(conditions);
-    const query = `SELECT * FROM mark WHERE ${keys.map((key) => `${key} = ?`).join(' AND ')}`;
+    const query = `SELECT * FROM marks WHERE ${keys.map((key) => `${key} = ?`).join(' AND ')}`;
     return new Promise((resolve, reject) => {
       db.query(query, values, (error, results) => {
         if (error) {
@@ -39,7 +39,7 @@ const mark = {
   },
   create: async (data) => {
     return new Promise((resolve, reject) => {
-      db.query('INSERT INTO mark SET ?', data, (error, results) => {
+      db.query('INSERT INTO marks SET ?', data, (error, results) => {
         if (error) {
           reject(error);
         } else {
@@ -50,7 +50,7 @@ const mark = {
   },
   findByIdAndUpdate: async (id, data) => {
     return new Promise((resolve, reject) => {
-      db.query('UPDATE mark SET ? WHERE id = ?', [data, id], (error, results) => {
+      db.query('UPDATE marks SET ? WHERE id = ?', [data, id], (error, results) => {
         if (error) {
           reject(error);
         } else {
@@ -61,7 +61,7 @@ const mark = {
   },
   findByIdAndDelete: async (id) => {
     return new Promise((resolve, reject) => {
-      db.query('DELETE FROM mark WHERE id = ?', [id], (error, results) => {
+      db.query('DELETE FROM marks WHERE id = ?', [id], (error, results) => {
         if (error) {
           reject(error);
         } else {

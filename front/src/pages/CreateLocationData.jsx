@@ -40,15 +40,16 @@ export default function CreateLocationData() {
   }, []);
 
   const onSubmit = async (data) => {
+    
+    const numericPrice = Number(data.price.replace(/[^0-9]/g, ''));
     const dataWithUserId = { 
       locationName: data.locationName,
-      price: data.price,
+      price: numericPrice * 0.01,
       description: data.description,
       obs: data.obs,
       usuario_id: user.id
      };
-    dataWithUserId.price = Number(data.price);
-    console.log(data.sport)
+     console.log(dataWithUserId);
     
     try {
       const response = await axios.post("http://localhost:3001/locals", dataWithUserId);
@@ -56,7 +57,6 @@ export default function CreateLocationData() {
       if (response.status === 201) {
         const returnLocal = await axios.get(`http://localhost:3001/locals/busca?name=${dataWithUserId.locationName}`)
           .catch(err => console.error(err));
-        
         console.log(returnLocal);
         const createSportPromises = selectedSports.map(async (sportId) => {
           const selectedSport = sportsOptions.find((sport) => sport.id == sportId);
@@ -66,7 +66,7 @@ export default function CreateLocationData() {
               name: selectedSport.name,
               local_id: returnLocal.data.id,
             };
-
+            console.log(dataSport);
             // Requisição para criar o esporte associado ao local
             await axios.post("http://localhost:3001/sports", dataSport);
           }
@@ -81,10 +81,6 @@ export default function CreateLocationData() {
       alert("Erro ao criar o local");
     }
   };
-
-  useEffect(() => {
-    console.log(price);
-  }, [inputValue])
 
   const handleSelectSports = (event) => {
     const selectedSportId = event.target.value;

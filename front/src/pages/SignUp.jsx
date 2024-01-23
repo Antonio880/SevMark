@@ -35,12 +35,16 @@ export default function SignUp() {
       typeUser: typeUser,
     };
 
-    const response = await axios.post(`${BASE_URL}users`, data);
+    const response = await axios.post(`${BASE_URL}users`, data)
+      .catch((e) => {
+        if(e.response.status)
+          alert("Usuário ja existente");
+        else
+          alert("Erro na criação do Usuário");
+      });
     console.log(response);
     
-    if(response.status === 409){
-      alert("Usuário ja Existe");
-    }else if(response.status === 201){
+    if(response.status === 201){
       setUser(data);
       if(typeUser === "cliente"){
         navigate("/home");

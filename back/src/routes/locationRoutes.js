@@ -5,9 +5,10 @@ const routes = express.Router();
 
 routes.get('/locals', LocationDataController.listLocationData);
 routes.get("/locals/sportName", LocationDataController.getLocationsBySport);
+routes.get('/locals/busca', LocationDataController.findLocationByName);
 routes.get('/locals/:id', LocationDataController.findLocationDataById);
 // routes.post('/user', LocationDataController.getUser);
-routes.get('/locals/busca', LocationDataController.findLocationByName);
+
 routes.post('/locals', LocationDataController.createLocationData);
 // routes.put('/users/:id', LocationDataController.updateUser);
 // routes.delete('/users/:id', LocationDataController.deleteUser);
