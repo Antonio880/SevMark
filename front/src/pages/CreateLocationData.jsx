@@ -55,7 +55,7 @@ export default function CreateLocationData() {
       const response = await axios.post("http://localhost:3001/locals", dataWithUserId);
       
       if (response.status === 201) {
-        const returnLocal = await axios.get(`http://localhost:3001/locals/busca?name=${dataWithUserId.locationName}`)
+        const returnLocal = await axios.get(`http://localhost:3001/locals/busca?name=${dataWithUserId.locationName}&description=${dataWithUserId.description}`)
           .catch(err => console.error(err));
         console.log(returnLocal);
         const createSportPromises = selectedSports.map(async (sportId) => {

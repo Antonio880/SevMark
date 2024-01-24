@@ -53,10 +53,6 @@ export default function MarkedCalendar({}) {
       }
     };
 
-    // useEffect(() => {
-    //   console.log(dayMarked);
-    // },[dayMarked])
-
     useEffect(() => {
       const fetchMarksSelecteds = async () => {
         await axios.get(`http://localhost:3001/marks/buscaUserId?userId=${user.id}`)

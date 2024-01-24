@@ -68,7 +68,13 @@ class MarkController {
 
   static async createMark(req, res) {
     try {
+      const { dayOfMonth, hour, local_id, monthYear } = req.body;
+      // Verifique se o usuário com o mesmo e-mail já existe
+      const marksExisting = await mark.findOne({dayOfMonth: dayOfMonth, hour: hour, local_id: local_id, monthYear: monthYear});
       
+      if(marksExisting) {
+        return res.status(409).json({ message: "Mark already exists" });
+      }
       const newMark = await mark.create(req.body);
       res.status(201).json({ message: 'Created successfully', mark: newMark });
     } catch (error) {

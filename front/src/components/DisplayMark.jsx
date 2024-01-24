@@ -12,7 +12,7 @@ export default function DisplayMark({ data, setShowDisplayMark }) {
         <div className="h-16 overflow-y-auto px-1 pt-4">
           {
             obs && (
-              <p className="overflow-x-auto">Observações Adicionais: {obs}</p>
+              <p className="overflow-x-auto flex justify-center">Observações Adicionais: {obs}</p>
             )
           }
         </div>

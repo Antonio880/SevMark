@@ -16,17 +16,11 @@ export default function ClockMark ({ time, clockForDay }) {
         await axios.get(`http://localhost:3001/locals/${hourMarked.local_id}`)
           .then(response => setLocalForUserMarked(response.data))
           .catch(err => console.log(err));
-          console.log("1")
-        
       }
     }
     
     fetchLocalUser();
   }, []);
-
-  useEffect(() => {
-    console.log(localForUserMarked)
-  }, [localForUserMarked])
 
   const handleClick = () => {
     setClicked(!clicked);

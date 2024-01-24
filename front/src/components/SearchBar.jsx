@@ -15,6 +15,7 @@ export default function SearchBar() {
         }}
       />
       <Button
+        disabled={"true"}
         variant="contained"
         sx={{
           backgroundColor: "rgb(255, 173, 113)",

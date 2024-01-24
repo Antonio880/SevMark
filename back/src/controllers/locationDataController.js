@@ -49,8 +49,8 @@ class LocationDataController {
 
   static async findLocationByName(req, res) {
     try {
-      const nome = req.query.name;
-      const locationDataFound = await local.findOne({ locationName: nome });
+      const { name, description } = req.query;
+      const locationDataFound = await local.findOne({ locationName: name, description });
   
       if (locationDataFound) {
         res.status(200).json(locationDataFound);
@@ -68,10 +68,11 @@ class LocationDataController {
 
       // Consulta SQL para obter locais associados a um esporte específico
       const query = `
-        SELECT local.*
-        FROM local
-        INNER JOIN sport ON local.id = sport.local_id
-        WHERE sport.name = ?;
+      SELECT locals.*
+      FROM locals
+      INNER JOIN sports ON locals.id = sports.local_id
+      WHERE sports.name = ?;
+      
       `;
 
       const locations = await sport.query(query, [sportName]);

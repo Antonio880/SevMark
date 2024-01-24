@@ -42,7 +42,6 @@ export default function SignUp() {
         else
           alert("Erro na criação do Usuário");
       });
-    console.log(response);
     
     if(response.status === 201){
       setUser(data);

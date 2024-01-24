@@ -68,7 +68,6 @@ export default function Home() {
       .get("http://localhost:3001/locals")
       .then((response) => {
         setLocationData(response.data.result);
-        console.log(response.data);
       })
       .catch((err) => {
         console.log(err);

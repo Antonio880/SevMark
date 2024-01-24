@@ -62,11 +62,15 @@ export default function SchedulePicker({ setShowDisplayMark, id }){
           local_id: id,
           usuario_id: user.id
         };
-
-        const response = await axios.post(`http://localhost:3001/marks`, data);
+        const response = await axios.post(`http://localhost:3001/marks`, data)
+        .catch((e) => {
+          if(e.response.status === 409){
+            alert("O Horário " + data.hour + " ja está marcado!");
+          }
+        });
 
         if(response.status === 201) {
-          alert("Marcado com Sucesso!");
+          alert("Horário: " + data.hour + " marcado com sucesso!");
         }
       }
     } catch (e) {
@@ -75,10 +79,6 @@ export default function SchedulePicker({ setShowDisplayMark, id }){
 
     // navigate("")
   };
-
-  useEffect(() => {
-    console.log(timeSelected);
-  }, []);
 
   const handleDayClick = (day) => {
     if (selectedDay) {
@@ -103,7 +103,7 @@ export default function SchedulePicker({ setShowDisplayMark, id }){
 
   return (
     <div className="">
-      <div className="day-buttons">
+      <div className="md:pl-4">
         {getNextSevenDays().map((day) => (
           <DayMark
             key={day.shortDay}
