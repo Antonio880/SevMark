@@ -103,7 +103,7 @@ export default function SchedulePicker({ setShowDisplayMark, id }){
 
   return (
     <div className="">
-      <div className="md:pl-4">
+      <div className="pl-3 sm:pl-5">
         {getNextSevenDays().map((day) => (
           <DayMark
             key={day.shortDay}

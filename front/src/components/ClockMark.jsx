@@ -22,7 +22,7 @@ const ClockMark = ({ time, setSelectedClock, selectedClock, selectedClockDay }) 
     >
       {time}
       {isAvailable && (
-        <div className="absolute top-6 left-[750px] cursor w-3">
+        <div className="absolute top-6 left-[365px] sm:left-[550px] md:left-[660px] lg:left-[750px] cursor w-3">
           <img src="seta.png" alt="img seta" />
         </div>
       )}

@@ -49,7 +49,6 @@ export default function CreateLocationData() {
       obs: data.obs,
       usuario_id: user.id
      };
-     console.log(dataWithUserId);
     
     try {
       const response = await axios.post("http://localhost:3001/locals", dataWithUserId);
@@ -57,7 +56,6 @@ export default function CreateLocationData() {
       if (response.status === 201) {
         const returnLocal = await axios.get(`http://localhost:3001/locals/busca?name=${dataWithUserId.locationName}&description=${dataWithUserId.description}`)
           .catch(err => console.error(err));
-        console.log(returnLocal);
         const createSportPromises = selectedSports.map(async (sportId) => {
           const selectedSport = sportsOptions.find((sport) => sport.id == sportId);
         
@@ -66,7 +64,6 @@ export default function CreateLocationData() {
               name: selectedSport.name,
               local_id: returnLocal.data.id,
             };
-            console.log(dataSport);
             // Requisição para criar o esporte associado ao local
             await axios.post("http://localhost:3001/sports", dataSport);
           }

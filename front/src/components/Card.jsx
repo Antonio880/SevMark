@@ -26,7 +26,7 @@ export default function Card({ data }) {
   return (
     <div>
     <div
-      className="relative mt-5 rounded-md w-[800px] flex shadow-md bg-slate-100 leading-6 transition ease-in-out cursor-pointer delay-150 hover:-translate-y-1 hover:scale-70 hover:bg-slate-200 duration-200 focus-visible:outline focus-visible:outline-2"
+      className="relative mt-5 rounded-md w-[400px] sm:w-[590px] md:w-[700px] lg:w-[800px] flex shadow-md bg-slate-100 leading-6 transition ease-in-out cursor-pointer delay-150 hover:-translate-y-1 hover:scale-70 hover:bg-slate-200 duration-200 focus-visible:outline focus-visible:outline-2"
       onClick={() => {
         setShowDisplayMark(!showDisplayMark);
       }}
@@ -34,12 +34,12 @@ export default function Card({ data }) {
         <>
           <div className="">
             <img
-              className="rounded-md"
+              className="rounded-md h-full sm:w-[240px] md:w-40"
               src="https://source.unsplash.com/random/170x110"
               alt=""
             />
           </div>
-          <div className="w-[400px] mx-3 mt-6 ">
+          <div className="w-[400px] sm:mx-3 mt-6 ">
             <p className="flex items-center justify-center text-sm font-semibold leading-6 text-gray-900">
               {locationName}
             </p>
@@ -63,7 +63,7 @@ export default function Card({ data }) {
                 ))}
             </div>
           </div>
-          <div className="absolute top-12 left-[770px] cursor w-4">
+          <div className="absolute top-12 left-[370px] sm:left-[560px] md:left-[670px] lg:left-[770px] cursor w-4">
             <img src="./seta.png" alt="img seta" />
           </div>
         </>
