@@ -14,7 +14,7 @@ function App() {
       <Route path='/' element={<SignIn />}/>
       <Route path='*' element={<SignIn />}/>
       <Route path='/sign-up' element={<SignUp />}/>
-      <Route path='/create-location' element={<CreateLocationData />} />
+      <Route path='/create-location' element={user ? <CreateLocationData /> : <SignIn />} />
     </Routes>
   )
 }

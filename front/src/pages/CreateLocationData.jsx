@@ -15,6 +15,7 @@ export default function CreateLocationData() {
   const [inputValue, setInputValue] = useState('');
   const [ price, setPrice ] = useState(0);
   const { user } = useUserContext();
+  const [ images, setImages ] = useState([]);
   const [selectedSports, setSelectedSports] = useState([]);
   const [sportsOptions, setSportsOptions] = useState([]);
 
@@ -40,16 +41,17 @@ export default function CreateLocationData() {
   }, []);
 
   const onSubmit = async (data) => {
-    
+    console.log(data.imageUpload);
     const numericPrice = Number(data.price.replace(/[^0-9]/g, ''));
     const dataWithUserId = { 
       locationName: data.locationName,
       price: numericPrice * 0.01,
       description: data.description,
       obs: data.obs,
-      usuario_id: user.id
+      usuario_id: user.id,
+      /* localImage: data.imageUpload */
      };
-    
+     
     try {
       const response = await axios.post("http://localhost:3001/locals", dataWithUserId);
       
@@ -68,7 +70,13 @@ export default function CreateLocationData() {
             await axios.post("http://localhost:3001/sports", dataSport);
           }
         });
-     
+        /* data.imageUpload.map(async (image) => {
+          const imageWithLocalId = {
+            image,
+            local_id: returnLocal.data.id
+          }
+          await axios.post("http://localhost:3001/images", image);
+        }) */
         navigate("/home");
       } else {
         alert("Sua criação foi inválida");
@@ -109,16 +117,20 @@ export default function CreateLocationData() {
     setInputValue(formattedValue);
   };
 
+  useEffect(() => {
+    console.log(images)
+  }, [images])
+
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
         <div className="pt-4">
           <div className="border-b border-gray-900/10 pb-12">
             <h2 className="flex justify-center text-base font-semibold leading-7 text-gray-900">
               Cadastro do Local para ser Alugado
             </h2>
 
-            <div className="mt-10 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="mt-10 flex flex-col md:gap-x-6 md:gap-y-8 md:grid-cols-6">
               <div className="sm:col-span-4">
                 <label
                   for="name"
@@ -145,23 +157,23 @@ export default function CreateLocationData() {
                 )}
               </div>
 
-              <div className="flex flex-row justify-center">
+              <div className="flex flex-col md:flex-row justify-center">
                 <div>
-                  <div className="sm:col-span-4">
+                  <div className="md:col-span-4">
                     <label
                       for="price"
-                      className="text-sm font-medium leading-6 text-gray-900"
+                      className="text-sm flex justify-center md:justify-start font-medium leading-6 text-gray-900"
                     >
                       Preço por Hora
                     </label>
-                    <div className="mt-2">
-                      <div className="flex rounded-md w-28 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-orange-500 sm:max-w-md">
+                    <div className="mt-2 flex justify-center md:justify-start">
+                      <div className=" rounded-md w-28 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-orange-500 sm:max-w-md">
                         <input
                           type="text"
                           name="price"
                           id="price"
                           autoComplete="price"
-                          className="flex-1 border-0 w-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                          className="flex-1 border-0 w-28 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                           {...register("price", { required: "Campo obrigatório" })}
                           value={inputValue}
                           onChange={handlePriceChange}
@@ -173,21 +185,21 @@ export default function CreateLocationData() {
                     </div>
                   </div>
 
-                  <div className="sm:col-span-4">
+                  <div className="md:col-span-4">
                     <label
                       htmlFor="price"
-                      className="text-sm font-medium leading-6 text-gray-900"
+                      className="flex justify-center text-sm font-medium leading-6 text-gray-900"
                     >
                       Endereço
                     </label>
-                    <div className="mt-2">
-                      <div className="flex rounded-md w-80 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-orange-500 sm:max-w-md">
+                    <div className="flex justify-center ">
+                      <div className="flex mt-2 rounded-md w-80 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-orange-500 sm:max-w-md">
                         <input
                           type="text"
                           name="price"
                           id="price"
                           autoComplete="price"
-                          className="flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                          className="flex-1  border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                           {...register("description", { required: "Campo obrigatório" })}
                         // onChange={formatarPreco}
                         />
@@ -200,7 +212,7 @@ export default function CreateLocationData() {
                 </div>
 
                 <div>
-                  <div className="flex my-3 pl-20">
+                  <div className="flex my-3 justify-center">
                     <label htmlFor="sport" className="flex items-center my-2 pr-3 text-sm font-medium text-gray-900">
                       Sport:
                     </label>
@@ -232,7 +244,7 @@ export default function CreateLocationData() {
                 </div>
               </div>
 
-              <div className="px-44 col-span-full">
+              <div className="px-20 md:px-44 col-span-full">
                 <label
                   for="about"
                   className=" text-sm font-medium leading-6 text-gray-900"
@@ -249,7 +261,7 @@ export default function CreateLocationData() {
                   ></textarea>
                 </div>
               </div>
-              <div className="px-44">
+              <div className="px-20 md:px-44">
                 <label
                   for="cover-photo"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -278,9 +290,12 @@ export default function CreateLocationData() {
                         <span>Upload a file</span>
                         <input
                           id="file-upload"
-                          name="file-upload"
+                          name="file"
                           type="file"
                           className="sr-only"
+                          onClick={(e) => {
+                            setImages([...images, e.target.files[0]])
+                          }}
                         />
                       </label>
                       <p className="pl-1">or drag and drop</p>
@@ -289,9 +304,15 @@ export default function CreateLocationData() {
                       PNG, JPG, GIF up to 10MB
                     </p>
                   </div>
+                  
                 </div>
               </div>
             </div>
+            {
+              images.map((image) => {
+                <img src={"seta.png"} alt="" />
+              })
+            }
             <div className="mt-6 mr-44 flex items-center justify-end gap-x-6">
               <button
                 type="button"

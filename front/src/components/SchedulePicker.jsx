@@ -7,7 +7,7 @@ import ClockMark from "./ClockMark";
 import { useUserContext } from "./ContextUser";
 import axios from "axios";
 
-export default function SchedulePicker({ setShowDisplayMark, id }){
+export default function SchedulePicker({ setShowDisplayMark, id, phone }){
   const { user } = useUserContext();
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedClock, setSelectedClock] = useState([]);
@@ -52,7 +52,10 @@ export default function SchedulePicker({ setShowDisplayMark, id }){
   };
 
   const handleSaveDayHour = async () => {
+    
     try {
+      const reservedHours = [];
+
       for (let i = 0; i < selectedClock.length; i++) {
         const data = {
           dayOfMonth: selectedDay.dayOfMonth,
@@ -65,18 +68,31 @@ export default function SchedulePicker({ setShowDisplayMark, id }){
         const response = await axios.post(`http://localhost:3001/marks`, data)
         .catch((e) => {
           if(e.response.status === 409){
-            alert("O Horário " + data.hour + " ja está marcado!");
+            alert("O Horário " + data.hour + data.dayOfMonth + data.monthYear  + " ja está marcado!");
           }
         });
 
         if(response.status === 201) {
           alert("Horário: " + data.hour + " marcado com sucesso!");
+          reservedHours.push(data.hour);
+        }
+        try{
+          const message = `Olá, estou reservando o seu espaço para o dia ${selectedDay.dayOfMonth}/${selectedDay.monthYear} no(s) horário(s) ${reservedHours.join(', ')}.`;
+          const encodedMessage = encodeURIComponent(message);
+          /* const whatsappUrl = `https://api.whatsapp.com/send?1=pt_BR&phone=5585992147100` */
+          const whatsappUrl = `https://wa.me/55${phone}/? text=${encodedMessage}`;
+          /* `` */
+          window.open(whatsappUrl, '_blank');
+          setShowDisplayMark(false);
+        }catch(e){
+          alert("Erro ao mandar a mensagem para o dono do local");
+          console.error(e);
         }
       }
     } catch (e) {
       console.log(e);
     }
-
+    
     // navigate("")
   };
 

@@ -9,6 +9,7 @@ import Input from "../components/Input";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Box from "@mui/material/Box";
+import PhoneInput from "../components/PhoneInput";
 
 export default function SignUp() {
   const {
@@ -139,6 +140,23 @@ export default function SignUp() {
                 />
                 <p className="alerts">{errors.passwordConfirm?.message}</p>
               </div>
+            </div>
+            <div className="">
+              <div className="flex">
+                <label
+                  htmlFor="phoneNUmber"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Phone Number
+                </label>
+                <div className="w-9">
+                  <img src="interrogacao.png"  title="Coloque sem o '9' adicional"/>
+                </div>
+              </div>
+              <div className="mt-2">
+                <PhoneInput register={register} />
+              </div>
+              {errors.phoneNUmber && <span>This field is required</span>}
             </div>
             <Box
               sx={{

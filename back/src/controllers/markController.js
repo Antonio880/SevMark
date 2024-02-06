@@ -70,11 +70,15 @@ class MarkController {
     try {
       const { dayOfMonth, hour, local_id, monthYear } = req.body;
       // Verifique se o usuário com o mesmo e-mail já existe
-      const marksExisting = await mark.findOne({dayOfMonth: dayOfMonth, hour: hour, local_id: local_id, monthYear: monthYear});
-      
-      if(marksExisting) {
+      const marksExisting = await mark.find({ local_id });
+
+      // Verificar se já existe uma marcação para o mesmo dia e hora
+      const isMarked = marksExisting.some(mark => mark.dayOfMonth === dayOfMonth && mark.hour === hour && mark.monthYear === monthYear);
+  
+      if (isMarked) {
         return res.status(409).json({ message: "Mark already exists" });
       }
+    
       const newMark = await mark.create(req.body);
       res.status(201).json({ message: 'Created successfully', mark: newMark });
     } catch (error) {

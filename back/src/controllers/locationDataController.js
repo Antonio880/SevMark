@@ -17,7 +17,8 @@ class LocationDataController {
           locationName: data.locationName,
           price: data.price,
           description: data.description,
-          obs: data.obs
+          obs: data.obs,
+          usuario_id: data.usuario_id
         });
       });
 
@@ -39,11 +40,26 @@ class LocationDataController {
 
   static async createLocationData(req, res) {
     try {
-      // Lógica para criar dados de localização, similar à do createUser
+      // Verificar se o local já existe com base em algum critério (por exemplo, nome do local)
+      const existingLocation = await local.findOne({
+        where: {
+          // Adapte isso para o critério que você deseja usar (por exemplo, nome)
+          name: req.body.name,
+        },
+      });
+  
+      if (existingLocation) {
+        // Se o local já existir, retorne uma resposta indicando que o local já está cadastrado
+        return res.status(400).json({ message: 'Location already exists' });
+      }
+  
+      // Se o local não existir, proceda com a criação
       const newLocationData = await local.create(req.body);
-      res.status(201).json({ message: 'Created successfully', local: newLocationData });
+      return res.status(201).json({ message: 'Created successfully', local: newLocationData });
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to create location data` });
+      // Tratar erros durante o processo
+      console.error(error);
+      return res.status(500).json({ message: 'Failed to create location data' });
     }
   }
 
