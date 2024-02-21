@@ -12,8 +12,13 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedClock, setSelectedClock] = useState([]);
   const [selectedClockDay, setSelectedClockDay] = useState([]);
+  const [ avaliableTimesForLocal, setAvaliableTimesForLocal ] = useState([]);
   const [timeSelected, setTimeSelected] = useState([]);
   const [clicked, setClicked] = useState("");
+
+  useEffect(() => {
+    console.log(avaliableTimesForLocal);
+  }, [avaliableTimesForLocal])
 
   useEffect(() => {
     const fetchMarksSelecteds = async () => {
@@ -32,7 +37,27 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
       }
     };
 
+    const fetchAvaliableTimes = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/avaliableTimes/busca?localId=${id}`
+        );
+        setAvaliableTimesForLocal(
+          avaliableTimesForLocal.concat(
+            response.data.map((item) => ({
+              day: item.day,
+              startTime: item.startTime,
+              endTime: item.endTIme,
+            }))
+          )
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
     fetchMarksSelecteds();
+    fetchAvaliableTimes();
   }, [id]);
 
   const getNextSevenDays = () => {
@@ -140,7 +165,8 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
                   selectedClock,
                   timeSelected,
                   setSelectedClock,
-                  selectedClockDay
+                  selectedClockDay,
+                  avaliableTimesForLocal
                 )}
             </div>
           </div>
@@ -169,29 +195,39 @@ const renderTimeSlots = (
   selectedClock,
   timeSelected,
   setSelectedClock,
-  selectedClockDay
+  selectedClockDay,
+  avaliableTimesForLocal
 ) => {
   const timeSlots = [];
-  const startTime = moment().startOf("day").hour(7); // hora inicial
-  const endTime = moment().startOf("day").hour(24); // hora final
 
-  let currentTime = startTime.clone();
-  while (currentTime.isBefore(endTime)) {
-    const time = currentTime.format("HH:mm");
-    // const isMarked = timeSelected.includes(time);
-    // const isAvailable = !isMarked || selectedClockDay.includes(time);
-    timeSlots.push(
-      <ClockMark
-        key={time}
-        time={time}
-        setSelectedClock={setSelectedClock}
-        selectedClockDay={selectedClockDay}
-        selectedClock={selectedClock}
-        selectedDay={selectedDay}
-      />
-    );
+  // Encontre o objeto de horário disponível correspondente ao dia selecionado
+  const availableTimeForSelectedDay = avaliableTimesForLocal.find(
+    (time) => time.day === selectedDay.shortDay
+  );
 
-    currentTime = currentTime.add(1, "hour");
+  if (availableTimeForSelectedDay) {
+    const startTime = moment(parseInt(availableTimeForSelectedDay.startTime), "HH:mm");
+    const endTime = moment(parseInt(availableTimeForSelectedDay.endTime), "HH:mm");
+
+    let currentTime = startTime.clone();
+    while (currentTime.isBefore(endTime)) {
+      const time = currentTime.format("HH:mm");
+
+      timeSlots.push(
+        <ClockMark
+          key={time}
+          time={time}
+          setSelectedClock={setSelectedClock}
+          selectedClockDay={selectedClockDay}
+          selectedClock={selectedClock}
+          selectedDay={selectedDay}
+        />
+      );
+
+      currentTime = currentTime.add(1, "hour");
+    }
+  } else {
+    console.error("Horário não disponível para o dia selecionado");
   }
 
   return timeSlots;

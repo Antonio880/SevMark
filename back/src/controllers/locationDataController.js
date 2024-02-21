@@ -41,7 +41,7 @@ class LocationDataController {
   static async createLocationData(req, res) {
     try {
       // Verificar se o local já existe com base em algum critério (por exemplo, nome do local)
-      const existingLocation = await local.findOne({
+      /* const existingLocation = await local.findOne({
         where: {
           // Adapte isso para o critério que você deseja usar (por exemplo, nome)
           name: req.body.name,
@@ -51,7 +51,7 @@ class LocationDataController {
       if (existingLocation) {
         // Se o local já existir, retorne uma resposta indicando que o local já está cadastrado
         return res.status(400).json({ message: 'Location already exists' });
-      }
+      } */
   
       // Se o local não existir, proceda com a criação
       const newLocationData = await local.create(req.body);
