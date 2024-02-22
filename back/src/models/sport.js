@@ -49,6 +49,17 @@ const sport = {
           });
         });
       },
+      findByIdAndDelete: async (id) => {
+        return new Promise((resolve, reject) => {
+          db.query('DELETE FROM sports WHERE id = ?', [id], (error, results) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(results);
+            }
+          });
+        });
+      },
 }
 
 export { sport };

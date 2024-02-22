@@ -1,12 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import DisplayMark from "./DisplayMark";
+import { useUserContext } from "./ContextUser";
 
 export default function Card({ data }) {
-  const { locationName, description, price, id } = data;
+  const { locationName, description, price, id, usuario_id } = data;
+  const { user } = useUserContext();
   const [sports, setSports] = useState([]);
   const [showDisplayMark, setShowDisplayMark] = useState(false);
-  
+  const [ showDeleteButton, setShowDeleteButton ] = useState(false);
 
   useEffect(() => {
     async function fetchSports() {
@@ -24,13 +26,15 @@ export default function Card({ data }) {
   }, []);
 
   return (
-    <div>
-    <div
-      className="relative mt-5 rounded-md w-[400px] sm:w-[590px] md:w-[700px] lg:w-[800px] flex shadow-md bg-slate-100 leading-6 transition ease-in-out cursor-pointer delay-150 hover:-translate-y-1 hover:scale-70 hover:bg-slate-200 duration-200 focus-visible:outline focus-visible:outline-2"
-      onClick={() => {
-        setShowDisplayMark(!showDisplayMark);
-      }}
-    >
+    <div  >
+      <div   
+        className={`relative mt-5 rounded-md w-[400px] sm:w-[590px] md:w-[700px] lg:w-[800px] flex shadow-md bg-slate-100 leading-6 transition ease-in-out cursor-pointer delay-150 hover:-translate-y-1  hover:scale-70 hover:bg-slate-200 ${user.id === usuario_id && "animate-fade"} duration-200 focus-visible:outline focus-visible:outline-2`}
+        onClick={() => {
+          setShowDisplayMark(!showDisplayMark);
+        }}
+        onMouseOver={() => user.id === usuario_id && setShowDeleteButton(true)}
+        onMouseOut={() => user.id === usuario_id && setShowDeleteButton(false)}
+      >
         <>
           <div className="">
             <img
@@ -39,6 +43,13 @@ export default function Card({ data }) {
               alt=""
             />
           </div>
+          {
+            showDeleteButton && (
+              <div className="absolute left-[770px] top-2" >
+                <img src="lixeiro.png" className="w-5" alt="" />
+              </div> 
+            )
+          }
           <div className="w-[400px] sm:mx-3 mt-6 ">
             <p className="flex items-center justify-center text-sm font-semibold leading-6 text-gray-900">
               {locationName}

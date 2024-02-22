@@ -185,10 +185,6 @@ export default function CreateLocationData() {
     setInputValue(formattedValue);
   };
 
-  useEffect(() => {
-    console.log(getNextSevenDays)
-  }, [getNextSevenDays]);
-
   const handleDayClick = (day) => {
     if (selectedDay) {
       setSelectedDay(null);

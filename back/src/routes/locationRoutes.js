@@ -11,7 +11,7 @@ routes.get('/locals/:id', LocationDataController.findLocationDataById);
 
 routes.post('/locals', LocationDataController.createLocationData);
 // routes.put('/users/:id', LocationDataController.updateUser);
-// routes.delete('/users/:id', LocationDataController.deleteUser);
+ routes.delete('/locals/:id', LocationDataController.deleteLocationData);
 
 
 export default routes;

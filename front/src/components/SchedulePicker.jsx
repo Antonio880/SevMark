@@ -17,10 +17,6 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
   const [clicked, setClicked] = useState("");
 
   useEffect(() => {
-    console.log(avaliableTimesForLocal);
-  }, [avaliableTimesForLocal])
-
-  useEffect(() => {
     const fetchMarksSelecteds = async () => {
       try {
         const response = await axios.get(
