@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
-import { useUserContext } from './components/ContextUser';
+import { useUserContext } from './Context/ContextUser';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import CreateLocationData from './pages/CreateLocationData';

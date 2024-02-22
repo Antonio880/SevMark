@@ -4,7 +4,7 @@ import React, { useDebugValue, useEffect, useState } from "react";
 import moment from "moment";
 import DayMark from "./DayMark";
 import ClockMark from "./ClockMark";
-import { useUserContext } from "./ContextUser";
+import { useUserContext } from "../Context/ContextUser";
 import axios from "axios";
 
 export default function SchedulePicker({ setShowDisplayMark, id, phone }){
@@ -140,7 +140,7 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
 
   return (
     <div className="">
-      <div className="pl-3 sm:pl-5">
+      <div className="pl-3 w-full sm:pl-5">
         {getNextSevenDays().map((day) => (
           <DayMark
             key={day.shortDay}
@@ -168,14 +168,14 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
           </div>
           <div className="flex justify-between items-center mx-3">
             <button
-              className="flex items-center text-sm m-2 font-semibold leading-6 transition ease-in-out duration-300 hover:shadow-sm  delay-150 text-gray-900 hover:bg-slate-300 rounded-md p-2"
+              className="flex items-center text-lg ml-4 font-semibold leading-6 transition ease-in-out duration-300 hover:shadow-sm  delay-150 text-gray-900 hover:bg-slate-300 rounded-md p-3"
               onClick={() => setShowDisplayMark(false)}
             >
               Cancel
             </button>
             <button
               onClick={handleSaveDayHour}
-              className="flex justify-center rounded-md px-3 py-1.5 text-sm text-black font-semibold leading-6 transition ease-in-out delay-150 hover:text-white hover:bg-orange-400 duration-300 hover:shadow-sm"
+              className="flex justify-center rounded-md p-3 text-lg text-black font-semibold leading-6 transition ease-in-out delay-150 hover:text-white hover:bg-orange-400 duration-300 hover:shadow-sm"
             >
               Reservar
             </button>

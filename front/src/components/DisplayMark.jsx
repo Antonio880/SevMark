@@ -15,13 +15,13 @@ export default function DisplayMark({ data, setShowDisplayMark }) {
   }, []);
 
   return (
-    <div className="h-[772px] w-[400px] sm:w-[590px] md:w-[700px] lg:w-[800px] py-2 bg-slate-100 rounded-md">
+    <div className="h-[800px] w-[400px] sm:w-[590px] md:w-[700px] lg:w-[1100px] py-2 bg-slate-100 rounded-md">
       <SwiperImages fotos={fotos} />
       <div className="flex flex-col">
         <div className="h-16 overflow-y-auto px-1 pt-4">
           {
             obs && (
-              <p className="overflow-x-auto flex justify-center px-2">Observações Adicionais: {obs}</p>
+              <p className="overflow-x-auto flex text-lg justify-center px-2">Observações Adicionais: {obs}</p>
             )
           }
         </div>

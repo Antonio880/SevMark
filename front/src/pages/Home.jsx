@@ -1,4 +1,4 @@
-import { useUserContext } from "../components/ContextUser";
+import { useUserContext } from "../Context/ContextUser";
 import { useEffect } from "react";
 import axios from "axios";
 import SearchBar from "../components/SearchBar";
@@ -13,19 +13,20 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import MarkedCalendar from "../components/MarkedCalendar";
+import { useLocalContext } from "../Context/ContextLocation";
 
 export default function Home() {
   const { user, setUser } = useUserContext();
+  const { locals, setLocals } = useLocalContext();
   const [selectedSport, setSelectedSport] = useState([]);
   const { register } = useForm();
   const [showCalendar, setShowCalendar] = useState("home");
-  const [locationData, setLocationData] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const response = await axios.get("http://localhost:3001/locals");
-        setLocationData(response.data.result);
+        setLocals(response.data.result);
       } catch (error) {
         // Trate os erros, se necessário
         console.error("Erro ao buscar dados:", error);
@@ -54,7 +55,7 @@ export default function Home() {
       await axios
         .get(`http://localhost:3001/locals/sportName?name=${selectedSport}`)
         .then((response) => {
-          setLocationData(response.data);
+          setLocals(response.data);
         })
         .catch((err) => console.log(err));
     };
@@ -67,7 +68,7 @@ export default function Home() {
     axios
       .get("http://localhost:3001/locals")
       .then((response) => {
-        setLocationData(response.data.result);
+        setLocals(response.data.result);
       })
       .catch((err) => {
         console.log(err);
@@ -133,9 +134,9 @@ export default function Home() {
               handleRemoveSport={handleRemoveSport}
             />
           </div>
-          {locationData ? (
+          {locals ? (
             <div className="flex justify-center">
-              <ListCard locationData={locationData} />
+              <ListCard locationData={locals} setLocals={setLocals} />
             </div>
           ) : (
             <div className="flex justify-center items-center h-[200px]">

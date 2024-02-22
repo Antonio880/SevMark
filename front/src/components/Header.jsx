@@ -11,7 +11,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { useUserContext } from "./ContextUser";
+import { useUserContext } from "../Context/ContextUser";
 import { useNavigate } from "react-router-dom"
 
 const pages = ["Products", "Pricing", "Blog"];

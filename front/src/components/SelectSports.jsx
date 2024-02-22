@@ -26,12 +26,12 @@ export default function SelectSports({ handleSelectSports, handleRemoveSport, se
 
     return (
         <div className="flex my-2">
-            <label htmlFor="sport" className="my-2 pr-3 text-sm font-medium text-gray-900">
+            <label htmlFor="sport" className="my-2 pr-3 text-lg font-medium text-gray-900">
                 Sport:
             </label>
             <select
                 id="sport"
-                className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-200 focus:border-orange-200 p-2.5`}
+                className={`bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-orange-200 focus:border-orange-200 p-2.5`}
                 onChange={handleSelectSports}
             >
                 <option defaultValue={""}>Choose a Sport</option>

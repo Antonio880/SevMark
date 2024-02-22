@@ -102,30 +102,41 @@ class LocationDataController {
   }
 
   static async deleteLocationData(req, res) {
-       try {
-         const id = req.params.id;
+    try {
+      const id = req.params.id;
+  
+      const localFound = await local.findById(id);
+      if (!localFound) {
+        return res.status(404).json({ message: "Local not found" });
+      }
 
-         const localFound = await local.findById(id);
-          if (!localFound) {
-            return res.status(404).json({ message: "Local not found" });
-          }
-
-         const markFound = await mark.findOne({ local_id: id });
-         const sportFound = await sport.findOne({ local_id: id });
-         const avaliableTimeFound = await availableTime.findOne({ local_id: id });
-         console.log(markFound, availableTime)
-         
-         await mark.findByIdAndDelete(markFound.id);
-         await sport.findByIdAndDelete(sportFound.id);
-         await availableTime.findByIdAndDelete(avaliableTimeFound.id);
-         
-         await local.findByIdAndDelete(id);
-         
-         res.status(200).json({ message: "local successfully deleted" });
-       } catch (error) {
-         res.status(500).json({ message: `${error.message} - Deletion failed` });
-       }
-     }
+      const markFound = await mark.findOne({ local_id: id });
+      const sportFound = await sport.findOne({ local_id: id });
+      const avaliableTimeFound = await availableTime.findOne({ local_id: id });
+  
+      // Efficiently collect all deletion promises using Promise.all
+      const deletionPromises = [];
+      if (markFound) {
+        deletionPromises.push(mark.deleteMany({ local_id: id }));
+      }
+      if (sportFound) {
+        deletionPromises.push(sport.deleteMany({ local_id: id }));
+      }
+      if (avaliableTimeFound) {
+        deletionPromises.push(availableTime.deleteMany({ local_id: id }));
+      }
+  
+      // Ensure all deletions complete before proceeding
+      await Promise.all(deletionPromises);
+  
+      // Delete the local record after all child deletions
+      await local.findByIdAndDelete(id);
+  
+      res.status(200).json({ message: "Local successfully deleted" });
+    } catch (error) {
+      res.status(500).json({ message: `${error.message} - Deletion failed` });
+    }
+  }
 
   // Métodos adicionais conforme necessário
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useUserContext } from "./ContextUser";
+import { useUserContext } from "../Context/ContextUser";
 export default function ClockMark ({ time, clockForDay }) {
   const [clicked, setClicked] = useState(false);
   const isAvailable = clockForDay.some(item => item.hour === time);

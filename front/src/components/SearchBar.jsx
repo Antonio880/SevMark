@@ -9,7 +9,7 @@ export default function SearchBar() {
           label="Procure Aqui"
           variant="outlined"
           sx={{ 
-              width: "350px", 
+              width: "450px", 
               ":focus": {
                   borderColor: "rgb(255, 173, 113)"
               }

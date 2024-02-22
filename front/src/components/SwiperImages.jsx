@@ -11,7 +11,7 @@ import { Pagination, Navigation } from "swiper/modules";
 
 export default function SwiperImages({ fotos }) {
   return (
-    <div className="flex justify-center w-[400px] sm:w-[590px] md:w-[700px] lg:w-[800px] ">
+    <div className="flex justify-center w-full ">
       <Swiper
         pagination={{
           type: "progressbar",

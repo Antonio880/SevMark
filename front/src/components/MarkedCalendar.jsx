@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import DayMarked from "./DayMarked";
 import ClockMarked from "./ClockMarked";
 import axios from "axios";
-import { useUserContext } from "./ContextUser";
+import { useUserContext } from "../Context/ContextUser";
 import moment from "moment";
 
 export default function MarkedCalendar({}) {
@@ -66,7 +66,7 @@ export default function MarkedCalendar({}) {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <div class="flex bg-white w-[380px] sm:w-[550px] shadow-md justify-start md:justify-center rounded-lg overflow-x-auto mx-auto py-4 px-2  md:mx-12">
+      <div class="flex bg-white w-[800px] shadow-md justify-start md:justify-center rounded-lg overflow-x-auto mx-auto py-4 px-2  md:mx-12">
       {getNextSevenDays().map((day) => (
           <DayMarked
             key={day.shortDay}

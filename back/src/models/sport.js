@@ -60,6 +60,20 @@ const sport = {
           });
         });
       },
+      deleteMany: async (conditions) => {
+        const keys = Object.keys(conditions);
+        const values = Object.values(conditions);
+        const query = `DELETE FROM sports WHERE ${keys.map((key) => `${key} = ?`).join(' AND ')}`;
+        return new Promise((resolve, reject) => {
+          db.query(query, values, (error, results) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(results);
+            }
+          });
+        });
+      },
 }
 
 export { sport };
