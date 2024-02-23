@@ -29,7 +29,7 @@ export default function ClockMark ({ time, clockForDay }) {
   return (
     <div
       key={time}
-      className={`py-5 w-[380px] sm:w-[560px] border-x-2 flex justify-center hover:bg-slate-200 ${clicked ? "bg-slate-200" : ""} `}
+      className={`py-5 w-[380px] sm:w-[775px] text-xl border-x-2 flex justify-center hover:bg-slate-200 ${clicked ? "bg-slate-200" : ""} `}
       onClick={handleClick} 
     >
       {time} 

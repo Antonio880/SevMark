@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../Context/ContextUser";
+import { useLocalContext } from "../Context/ContextLocation";
 import axios from "axios";
 import ChangeDay from "../components/ChangeDay";
 import moment from "moment";
@@ -16,6 +17,7 @@ export default function CreateLocationData() {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
   const [selectedDay, setSelectedDay] = useState(null);
+  const { locals, setLocals } = useLocalContext();
   const [ price, setPrice ] = useState(0);
   const { user } = useUserContext();
   const [ images, setImages ] = useState([]);
@@ -100,7 +102,7 @@ export default function CreateLocationData() {
       usuario_id: user.id
       /* localImage: data.imageUpload */
      };
-     
+     setLocals([...locals, dataWithUserId]);
     try {
       const response = await axios.post("http://localhost:3001/locals", {
         locationName: data.locationName,

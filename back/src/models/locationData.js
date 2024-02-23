@@ -32,7 +32,7 @@ import db from "../config/database.js";
           if (error) {
             reject(error);
           } else {
-            resolve(results[0]);
+            resolve(results);
           }
         });
       });

@@ -52,6 +52,22 @@ class MarkController {
     }
   }
 
+  static async findMarksByUsuarioIdAndLocalId(req, res) {
+    try {
+      const { usuario_id, local_id } = req.query;
+      const marksFound = await mark.findOne({ usuario_id, local_id });
+  
+      if (marksFound) {
+        
+        res.status(200).json(marksFound);
+      } else {
+        res.status(404).json({ message: 'Marks not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: `${error.message} - Failed to retrieve Mark` });
+    }
+  }
+
   static async findMarkByUserId(req, res) {
     try {
       const usuario_id = req.query.userId;

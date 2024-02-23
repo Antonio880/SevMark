@@ -42,9 +42,9 @@ export default function SignIn() {
 
   return (
     <div className="justify-center items-center">
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-10 lg:px-8">
+      <div className="flex min-h-full flex-1 flex-col justify-center  px-6 py-10 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="text-center text-4xl font-bold leading-9 tracking-tight text-gray-900">
+          <h2 className="text-center text-3xl font-bold leading-9 tracking-tight text-gray-900">
             Sign in to your account
           </h2>
         </div>
@@ -53,7 +53,7 @@ export default function SignIn() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-xl font-medium leading-6 text-gray-900"
+                className="block text-lg font-medium leading-6 text-gray-900"
               >
                 Email address
               </label>
@@ -66,7 +66,7 @@ export default function SignIn() {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-lg font-medium leading-6 text-gray-900"
                 >
                   Password
                 </label>
