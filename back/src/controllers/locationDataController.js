@@ -69,7 +69,7 @@ class LocationDataController {
     try {
       const { name, description } = req.query;
       const locationDataFound = await local.findOne({ locationName: name, description });
-  
+      
       if (locationDataFound) {
         res.status(200).json(locationDataFound);
       } else {

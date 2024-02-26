@@ -12,11 +12,11 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import MarkedCalendar from "../components/MarkedCalendar";
 import { useLocalContext } from "../Context/ContextLocation";
+import MarkedCalendarClient from "../components/MarkedCalendar";
 
 export default function Home() {
-  const { user, setUser } = useUserContext();
+  const { user } = useUserContext();
   const { locals, setLocals } = useLocalContext();
   const [selectedSport, setSelectedSport] = useState([]);
   const { register } = useForm();
@@ -35,18 +35,6 @@ export default function Home() {
 
     fetchData();
   }, []);
-  // const handleSelectSports = (event) => {
-  //     const selectedSportId = event.target.value;
-
-  //     if (!selectedSports.includes(selectedSportId)) {
-  //       setSelectedSports([...selectedSports, selectedSportId]);
-  //     }
-  //   };
-
-  // const handleRemoveSport = (sportId) => {
-  //     const updatedSports = selectedSports.filter((id) => id !== sportId);
-  //     setSelectedSports(updatedSports);
-  //   };
 
   const handleSelectSports = (event) => {
     const selectedSport = event.target.value;
@@ -145,7 +133,7 @@ export default function Home() {
           )}
         </div>
       ) : (
-        <MarkedCalendar></MarkedCalendar>
+        <MarkedCalendarClient />
       )}
       {user.typeUser === "dono" && <AddButton />}
     </div>

@@ -5,8 +5,8 @@ const routes = express.Router();
 
 routes.get('/marks', MarkController.listMarks);
 routes.get("/marks/buscaLocalId", MarkController.findMarkByLocalID);
+routes.get("/marks/busca", MarkController.findMarkByLocalIDAndUserId)
 routes.get("/marks/buscaUserId", MarkController.findMarkByUserId);
-routes.get('/marks/buscaLocalIdUserId', MarkController.findMarksByUsuarioIdAndLocalId);
 routes.get('/marks/:id', MarkController.findMarkById);
 // routes.post('/user', MarkController.getUser);
 

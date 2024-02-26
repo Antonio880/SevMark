@@ -27,7 +27,7 @@ class SportController {
       static async findSportByLocalId(req, res) {
         try {
           const local_id = req.query.id;
-          const sports = await sport.findOne({ local_id: local_id });
+          const sports = await sport.findOne({ local_id });
       
           if (sports.length > 0) {
             res.status(200).json(sports);

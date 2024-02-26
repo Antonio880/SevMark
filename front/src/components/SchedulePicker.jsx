@@ -27,6 +27,7 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
           day: item.dayOfMonth,
           monthYear: item.monthYear,
         }));
+        console.log(response.data);
         setTimeSelected(timesSelected);
       } catch (error) {
         console.error(error);
@@ -111,7 +112,7 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
         }
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
     
     // navigate("")
@@ -121,6 +122,7 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
     if (selectedDay) {
       setSelectedDay(null);
     } else {
+      
       setSelectedClockDay([]);
       for (let i = 0; i < timeSelected.length; i++) {
         if (
@@ -137,6 +139,10 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
       setSelectedClock([]);
     }
   };
+
+  /* useEffect(() => {
+    console.log(timeSelected);
+  }, [timeSelected]) */
 
   return (
     <div className="">

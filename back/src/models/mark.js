@@ -37,25 +37,6 @@ const mark = {
       });
     });
   },
-  /* findForCreate: async (conditions) => {
-    const keys = Object.keys(conditions);
-    const values = Object.values(conditions);
-    const query = `
-      SELECT *
-      FROM marks
-      WHERE local_id = ?
-        AND ${keys.map((key) => `${key} = ?`).join(' AND ')}
-    `;
-    return new Promise((resolve, reject) => {
-      db.query(query, [conditions.local_id, ...values], (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(results);
-        }
-      });
-    });
-  }, */
   create: async (data) => {
     return new Promise((resolve, reject) => {
       db.query('INSERT INTO marks SET ?', data, (error, results) => {

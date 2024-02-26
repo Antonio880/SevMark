@@ -5,7 +5,7 @@ import axios from "axios";
 import { useUserContext } from "../Context/ContextUser";
 import moment from "moment";
 
-export default function MarkedCalendar({}) {
+export default function MarkedCalendarClient({}) {
     const [ selectedDay, setSelectedDay ] = useState("");
     const [ dayMarked, setDayMarked ] = useState([]);
     const [ clockForDay, setClockForDay ] = useState([]);

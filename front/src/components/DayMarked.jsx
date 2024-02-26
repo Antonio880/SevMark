@@ -17,7 +17,7 @@ export default function DayMarked({ shortDay, dayOfMonth, selectedDay, handleDay
         <div class={`flex group hover:bg-orange-100 ${clicked && "bg-orange-100"} hover:shadow-lg hover-light-shadow rounded-lg mx-0 md:mx-6 transition-all duration-300 cursor-pointer justify-center w-16`} onClick={() => handleDayClick(shortDay)}>
           <div class="flex items-center p-1 py-4">
             <div class="text-center">
-              <p class="text-orange-900 group-hover:text-orange-900 text-xl transition-all	duration-300">
+              <p class="text-orange-900 group-hover:text-orange-900 group-hover:font-bold text-xl transit\ion-all	duration-300">
                 {" "}
                 {shortDay}{" "}
               </p>

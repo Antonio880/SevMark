@@ -91,7 +91,6 @@ export default function CreateLocationData() {
   }, []);
 
   const onSubmit = async (data) => {
-    console.log(data.imageUpload);
     const numericPrice = Number(data.price.replace(/[^0-9]/g, ''));
     
     const dataWithUserId = { 
@@ -115,13 +114,13 @@ export default function CreateLocationData() {
       if (response.status === 201) {
         const returnLocal = await axios.get(`http://localhost:3001/locals/busca?name=${dataWithUserId.locationName}&description=${dataWithUserId.description}`)
           .catch(err => console.error(err));
-        const createSportPromises = selectedSports.map(async (sportId) => {
+        selectedSports.map(async (sportId) => {
           const selectedSport = sportsOptions.find((sport) => sport.id == sportId);
         
           if (selectedSport) {
             const dataSport = {
               name: selectedSport.name,
-              local_id: returnLocal.data.id,
+              local_id: returnLocal.data[0].id,
             };
             // Requisição para criar o esporte associado ao local
             await axios.post("http://localhost:3001/sports", dataSport);
@@ -138,13 +137,12 @@ export default function CreateLocationData() {
           day: day.name,
           startTime: day.timeStart,
           endTime: day.timeEnd,
-          local_id: returnLocal.data.id // Isso será preenchido posteriormente
+          local_id: returnLocal.data[0].id // Isso será preenchido posteriormente
         }));
   
         await axios.post("http://localhost:3001/avaliableTimes", {
           availableTimes
-        })
-          .catch((e) => alert("Erro ao definir os Horários Disponíveis"));
+        }).catch((e) => alert("Erro ao definir os Horários Disponíveis - " + e));
         
 
         navigate("/home");
