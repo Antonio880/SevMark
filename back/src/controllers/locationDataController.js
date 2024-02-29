@@ -80,6 +80,21 @@ class LocationDataController {
     }
   }
 
+  static async findLocationByUserId(req, res) {
+    try {
+      const usuario_id = req.query.usuario_id;
+      const locationDataFound = await local.findOne({ usuario_id });
+      
+      if (locationDataFound) {
+        res.status(200).json(locationDataFound);
+      } else {
+        res.status(404).json({ message: 'Local not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: `${error.message} - Failed to retrieve location data` });
+    }
+  }
+
   static async getLocationsBySport(req, res) {
     try {
       const sportName = req.query.name;

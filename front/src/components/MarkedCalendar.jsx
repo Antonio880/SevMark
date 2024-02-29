@@ -9,8 +9,35 @@ export default function MarkedCalendarClient({}) {
     const [ selectedDay, setSelectedDay ] = useState("");
     const [ dayMarked, setDayMarked ] = useState([]);
     const [ clockForDay, setClockForDay ] = useState([]);
+    const [ markedForUser, setMarkedForUser ] = useState([]);
+    const [ localForUserMarked, setLocalForUserMarked] = useState([]);
     const { user } = useUserContext();
     // const [ selectedClockDay, setSelectedClockDay ] = useState([]);
+
+    useEffect(() => {
+      if(user.typeUser === "dono"){
+        const fetchLocalByUser = async () => {
+          let userLocal = {};
+          try {
+            await axios.get(`http://localhost:3001/locals/usuario_id?usuario_id=${user.id}`)
+              .then(response => userLocal = response.data[0])
+              .catch(e => console.error(e));
+            await axios.get(`http://localhost:3001/marks/buscaLocalIdBasedInUserId?local_id=${userLocal.id}`)
+              .then(response => setLocalForUserMarked(response.data.markFound))
+              .catch(e => console.log(e));          
+            
+          } catch (error) {
+            console.error(error);
+          }
+        };
+        console.log
+        fetchLocalByUser();
+      }
+    }, []);
+  
+    useEffect(() => {
+      console.log(localForUserMarked);
+    }, [localForUserMarked]);
 
     const getNextSevenDays = () => {
         const days = [];
@@ -32,14 +59,16 @@ export default function MarkedCalendarClient({}) {
       if (selectedDay) {
         setSelectedDay(null);
       } else {
+        const marksUsersBasedInSelectedDay = localForUserMarked.filter((markedDay) => markedDay.shortDay === day.shortDay && markedDay.dayOfMonth === Number(day.dayOfMonth) && markedDay.monthYear === day.monthYear);
+        
         // Filtrar os clocks para o dia selecionado
         const clocksForSelectedDay = dayMarked
-          .filter((markedDay) => markedDay.shortDay === day)
+          .filter((markedDay) => 
+            markedDay.shortDay === day.shortDay && markedDay.dayOfMonth === Number(day.dayOfMonth) && markedDay.monthYear === day.monthYear )
       
         setClockForDay(() => {
           const times = [];
           for (let i = 0; i < clocksForSelectedDay.length; i++) {
-            // console.log()
             const time = {
               hour: clocksForSelectedDay[i].hour, 
               local_id: clocksForSelectedDay[i].local_id, 
@@ -49,7 +78,8 @@ export default function MarkedCalendarClient({}) {
           }
           return times;
         });
-        setSelectedDay(day);
+        setSelectedDay(day.shortDay);
+        setMarkedForUser(marksUsersBasedInSelectedDay);
       }
     };
 
@@ -72,6 +102,7 @@ export default function MarkedCalendarClient({}) {
             key={day.shortDay}
             dayOfMonth={day.dayOfMonth}
             shortDay={day.shortDay}
+            monthYear={day.monthYear}
             handleDayClick={handleDayClick}
             setSelectedDay={setSelectedDay}
             selectedDay={selectedDay}
@@ -82,7 +113,8 @@ export default function MarkedCalendarClient({}) {
         <div className="h-[400px] overflow-y-auto border-b-2 mt-1 grid grid-cols-1 divide-y">
           {selectedDay &&
             renderTimeSlots(
-              clockForDay
+              clockForDay,
+              markedForUser
             )}
         </div>
       </div>
@@ -90,7 +122,8 @@ export default function MarkedCalendarClient({}) {
   );
 }
 const renderTimeSlots = (
-    clockForDay
+    clockForDay,
+    markedForUser
   ) => {
     const timeSlots = [];
     const startTime = moment().startOf("day").hour(7); // hora inicial
@@ -99,6 +132,11 @@ const renderTimeSlots = (
     let currentTime = startTime.clone();
     while (currentTime.isBefore(endTime)) {
       const time = currentTime.format("HH:mm");
+
+      const markFoundFunction = (time) => {
+        const markFound = markedForUser.find((mark) => mark.hour === time);
+        return markFound || null; // Retorna null se nenhum marcador for encontrado
+      };
       // const isMarked = timeSelected.includes(time);
       // const isAvailable = !isMarked || selectedClockDay.includes(time);
       timeSlots.push(
@@ -106,6 +144,7 @@ const renderTimeSlots = (
           key={time}
           time={time}
           clockForDay={clockForDay}
+          markedClockUser={markFoundFunction(time)}
         />
       );
   

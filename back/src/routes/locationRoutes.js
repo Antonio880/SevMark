@@ -5,6 +5,7 @@ const routes = express.Router();
 
 routes.get('/locals', LocationDataController.listLocationData);
 routes.get("/locals/sportName", LocationDataController.getLocationsBySport);
+routes.get("/locals/usuario_id", LocationDataController.findLocationByUserId);
 routes.get('/locals/busca', LocationDataController.findLocationByName);
 routes.get('/locals/:id', LocationDataController.findLocationDataById);
 // routes.post('/user', LocationDataController.getUser);

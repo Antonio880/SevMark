@@ -101,7 +101,7 @@ export default function CreateLocationData() {
       usuario_id: user.id
       /* localImage: data.imageUpload */
      };
-     setLocals([...locals, dataWithUserId]);
+     
     try {
       const response = await axios.post("http://localhost:3001/locals", {
         locationName: data.locationName,
@@ -144,7 +144,7 @@ export default function CreateLocationData() {
           availableTimes
         }).catch((e) => alert("Erro ao definir os Horários Disponíveis - " + e));
         
-
+        setLocals([...locals, dataWithUserId]);
         navigate("/home");
       } else {
         alert("Sua criação foi inválida");

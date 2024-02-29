@@ -1,28 +1,34 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useUserContext } from "../Context/ContextUser";
-export default function ClockMark ({ time, clockForDay }) {
+export default function ClockMark ({ time, clockForDay, markedClockUser }) {
   const [clicked, setClicked] = useState(false);
   const isAvailable = clockForDay.some(item => item.hour === time);
   const hourMarked = clockForDay.find(item => item.hour === time);
-  const [ localForUserMarked, setLocalForUserMarked] = useState(null)
+  const [ localForUserMarked, setLocalForUserMarked] = useState([]);
   const { user } = useUserContext();
   
   useEffect(() => {
-    const fetchLocalUser = async () => {
-      if(isAvailable) {
-        await axios.get(`http://localhost:3001/locals/${hourMarked.local_id}`)
-          .then(response => setLocalForUserMarked(response.data))
-          .catch(err => console.log(err));
+    if(user.typeUser === "cliente"){
+      const fetchLocalUser = async () => {
+        if(isAvailable) {
+          await axios.get(`http://localhost:3001/locals/${hourMarked.local_id}`)
+            .then(response => setLocalForUserMarked(response.data))
+            .catch(err => console.log(err));
+          }
       }
+      
+      fetchLocalUser();
     }
-    
-    fetchLocalUser();
   }, []);
 
   const handleClick = () => {
     setClicked(!clicked);
   };
+
+  useEffect(() => {
+
+  }, [localForUserMarked])
 
   return (
     <div
@@ -32,8 +38,13 @@ export default function ClockMark ({ time, clockForDay }) {
     >
       {time} 
       {
-        localForUserMarked && (
-          <p> - {localForUserMarked.locationName}</p>
+        localForUserMarked.locationName && (
+          <p>&nbsp; - {localForUserMarked.locationName}</p>
+        )
+      }
+      {
+        markedClockUser && (
+          <p>&nbsp; - {markedClockUser.username}</p>
         )
       }
     </div>

@@ -56,21 +56,10 @@ class MarkController {
   static async findMarkByLocalIDAndUserId(req, res) {
     try {
       const local_id = req.query.local_id;
-      const markFound = await mark.findOne({ local_id });
-      let usersForMarked = [];
-      for(let i = 0; i < markFound.length; i++){
-        const id = markFound[i].usuario_id;
-        const userForMarked = await user.findOne({ id });
-        console.log(userForMarked.length)  
-        for(let i = 0; i < userForMarked.length; i++){
-          const userFindMarked = usersForMarked.find(userForMarked[i]);
-          console.log("1");  
-          if(!userFindMarked)
-            usersForMarked.push(userFindMarked[i]);
-        }
-      }
-      if (markFound && usersForMarked) {
-        res.status(200).json({ usersForMarked, markFound });
+      const markFound = await mark.semNome({ local_id });
+      
+      if (markFound) {
+        res.status(200).json({ markFound });
       } else {
         res.status(404).json({ message: 'Mark or User not found' });
       }

@@ -25,6 +25,9 @@ app.use(
     express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
   );
 
+  app.use(cors({
+    origin: "http://localhost:5173"
+}));
 const server = http.createServer(app);
 
 const PORT = process.env.PORT || 3001;

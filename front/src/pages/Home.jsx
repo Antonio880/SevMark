@@ -19,7 +19,6 @@ export default function Home() {
   const { user } = useUserContext();
   const { locals, setLocals } = useLocalContext();
   const [selectedSport, setSelectedSport] = useState([]);
-  const { register } = useForm();
   const [showCalendar, setShowCalendar] = useState("home");
 
   useEffect(() => {

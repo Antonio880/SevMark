@@ -48,6 +48,17 @@ const mark = {
       });
     });
   },
+  semNome: async (data) => {
+    return new Promise((resolve, reject) => {
+      db.query('SELECT users.username, marks.dayOfMonth, marks.monthYear, marks.shortDay, marks.hour, marks.usuario_id FROM marks JOIN users WHERE ?', data, (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+  },
   findByIdAndUpdate: async (id, data) => {
     return new Promise((resolve, reject) => {
       db.query('UPDATE marks SET ? WHERE id = ?', [data, id], (error, results) => {
