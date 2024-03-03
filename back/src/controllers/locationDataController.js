@@ -61,7 +61,7 @@ class LocationDataController {
     } catch (error) {
       // Tratar erros durante o processo
       console.error(error);
-      return res.status(500).json({ message: 'Failed to create location data' });
+      return res.status(500).json({ message: 'Failed to create location data', error });
     }
   }
 

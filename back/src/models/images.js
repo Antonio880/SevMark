@@ -23,6 +23,17 @@ const image = {
             });
         });
     },
+    findById: async (id) => {
+      return new Promise((resolve, reject) => {
+        db.query('SELECT * FROM images WHERE id = ?', [id], (error, results) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(results[0]);
+          }
+        });
+      });
+    },
     findOne: async (conditions) => {
         const keys = Object.keys(conditions);
         const values = Object.values(conditions);
@@ -33,6 +44,17 @@ const image = {
               reject(error);
             } else {
               resolve(results[0]);
+            }
+          });
+        });
+      },
+      findByIdAndDelete: async (id) => {
+        return new Promise((resolve, reject) => {
+          db.query('DELETE FROM images WHERE id = ?', [id], (error, results) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(results);
             }
           });
         });

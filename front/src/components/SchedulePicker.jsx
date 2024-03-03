@@ -44,7 +44,7 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
             response.data.map((item) => ({
               day: item.day,
               startTime: item.startTime,
-              endTime: item.endTIme,
+              endTime: item.endTime,
             }))
           )
         );
@@ -54,7 +54,8 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
     }
 
     fetchMarksSelecteds();
-    fetchAvaliableTimes();
+    if(avaliableTimesForLocal.length < 7)
+      fetchAvaliableTimes();
   }, [id]);
 
   const getNextSevenDays = () => {
@@ -140,10 +141,6 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
     }
   };
 
-  /* useEffect(() => {
-    console.log(timeSelected);
-  }, [timeSelected]) */
-
   return (
     <div className="">
       <div className="pl-3 w-full sm:pl-5">
@@ -206,6 +203,8 @@ const renderTimeSlots = (
   const availableTimeForSelectedDay = avaliableTimesForLocal.find(
     (time) => time.day === selectedDay.shortDay
   );
+
+  console.log(availableTimeForSelectedDay);
 
   if (availableTimeForSelectedDay) {
     const startTime = moment(parseInt(availableTimeForSelectedDay.startTime), "HH:mm");

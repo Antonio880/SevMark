@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import DisplayMark from "./DisplayMark";
+import { TfiPencilAlt } from "react-icons/tfi";
 import { useUserContext } from "../Context/ContextUser";
 
 export default function Card({ data, onRemove }) {
@@ -8,7 +9,7 @@ export default function Card({ data, onRemove }) {
   const { user } = useUserContext();
   const [sports, setSports] = useState([]);
   const [showDisplayMark, setShowDisplayMark] = useState(false);
-  const [ showDeleteButton, setShowDeleteButton ] = useState(false);
+  const [ showButton, setShowButton ] = useState(false);
 
   useEffect(() => {
     async function fetchSports() {
@@ -36,8 +37,8 @@ export default function Card({ data, onRemove }) {
         onClick={() => {
           setShowDisplayMark(!showDisplayMark);
         }}
-        onMouseOver={() => user.id === usuario_id && setShowDeleteButton(true)}
-        onMouseOut={() => user.id === usuario_id && setShowDeleteButton(false)}
+        onMouseOver={() => user.id === usuario_id && setShowButton(true)}
+        onMouseOut={() => user.id === usuario_id && setShowButton(false)}
       >
         <>
           <div className="">
@@ -48,10 +49,17 @@ export default function Card({ data, onRemove }) {
             />
           </div>
           {
-            showDeleteButton && (
+            showButton && (
               <div className="absolute left-[1060px] top-3" onClick={handleRemoveClick} >
                 <img src="lixeiro.png" className="w-7" alt="" />
               </div> 
+            )
+          }
+          {
+            showButton && (
+              <div className="absolute left-[1000px] top-3">
+                <TfiPencilAlt size={28} />
+              </div>
             )
           }
           <div className="w-[400px] sm:mx-3 mt-12 ">

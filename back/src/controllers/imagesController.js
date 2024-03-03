@@ -1,43 +1,41 @@
 import { image } from "../models/images.js";
 
 class ImageController {
-    static async listImages(req, res) {
-        try {
-          const images = await image.find();
-          res.status(200).json(images);
-        } catch (error) {
-          res.status(500).json({ message: `${error.message} - Failed to retrieve images` });
-        }
-      }
+  static async listImages(req, res) {
+    try {
+      const pictures = await image.find();
+      res.json(pictures);
+    } catch (err) {
+      res.status(500).json({ message: "Erro ao buscar as imagens." });
+    }
+    }
 
-      static async createImage(req, res) {
-        try {
-          // Verificar se a imagem já existe com base em algum critério (por exemplo, nome da imagem)
-          // Adapte isso para o critério que você deseja usar (por exemplo, nome)
-          const { originalname: name, size, filename: key, local_id } = req.file;
-          const existingImage = await image.findOne({name});
-    
-          if (existingImage) {
-            // Se a imagem já existir, retorne uma resposta indicando que a imagem já está cadastrada
-            return res.status(400).json({ message: 'Image already exists' });
-          }
-          
-          // Se a imagem não existir, proceda com a criação
-          const newImage = await image.create({
-            name,
-            size,
-            key,
-            url: "",
-            local_id
-          });
-          
-          return res.status(201).json({ message: 'Image created successfully', image: newImage, destination: `${req.file.destination + key}` });
-        } catch (error) {
-          // Tratar erros durante o processo
-          console.error(error);
-          return res.status(500).json({ message: 'Failed to create image' });
-        }
+  static async createImage(req, res) {
+    try {
+      const { name } = req.body;
+  
+      const file = req.file;
+  
+      await image.create({ name, src: file.path });
+      res.status(201).json(picture);
+    } catch (err) {
+      res.status(500).json({ message: "Erro ao salvar a imagem." });
+    }
+  }
+  
+  static async removeImage(req, res){
+    try {
+      const picture = await image.findById(req.params.id);
+      if (!picture) {
+        return res.status(404).json({ message: "Imagem não encontrada" });
       }
+      fs.unlinkSync(picture.src);
+      await image.findByIdAndDelete(req.params.id);
+      res.json({ message: "Imagem removida com sucesso" });
+    } catch (err) {
+      res.status(500).json({ message: "Erro ao remover a imagem" });
+    }
+  }
 }
 
 export default ImageController;

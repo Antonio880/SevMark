@@ -90,6 +90,10 @@ export default function CreateLocationData() {
     ])
   }, []);
 
+  useEffect(() => {
+    console.log(user.id)
+  }, [user])
+
   const onSubmit = async (data) => {
     const numericPrice = Number(data.price.replace(/[^0-9]/g, ''));
     
