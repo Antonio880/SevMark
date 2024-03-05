@@ -18,19 +18,21 @@ export default function SignIn() {
   const navigate = useNavigate();
 
   const onSubmit = async () => {
-    navigate("/home");
     const email = watch("email");
     const password = watch("password");
     const data = {
       email: email,
       password: password,
     };
+    
     try{
       const response = await axios.post("http://localhost:3001/user", data)
         .catch(() => alert("Usuário não Existente"));
       
       if(response.status === 200){
         setUser(response.data.user);
+        const userString = JSON.stringify(response.data.user);
+        document.cookie = `user=${encodeURIComponent(userString)};  path=/`;
         navigate("/home");
       }else if(response.status == 400){
         alert("Usuário e/ou senha incorretos");

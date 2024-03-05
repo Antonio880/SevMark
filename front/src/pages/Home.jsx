@@ -16,7 +16,7 @@ import { useLocalContext } from "../Context/ContextLocation";
 import MarkedCalendarClient from "../components/MarkedCalendar";
 
 export default function Home() {
-  const { user } = useUserContext();
+  const { user, setUser } = useUserContext();
   const { locals, setLocals } = useLocalContext();
   const [selectedSport, setSelectedSport] = useState([]);
   const [showCalendar, setShowCalendar] = useState("home");
@@ -31,7 +31,7 @@ export default function Home() {
         console.error("Erro ao buscar dados:", error);
       }
     }
-
+    
     fetchData();
   }, []);
 
@@ -70,7 +70,7 @@ export default function Home() {
   return (
     <div>
       <div className="flex justify-center items-center h-[65px] pt-3">
-        <ButtonGroup variant="text" aria-label="text button group" sx={{width: "100px", height: "50px"}}>
+        <ButtonGroup variant="text" aria-label="text button group" sx={{ width: "100px", height: "50px" }}>
           <Button
             sx={{
               backgroundColor: showCalendar === "home" && "rgb(255, 124, 28)",

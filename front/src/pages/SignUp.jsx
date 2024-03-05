@@ -19,6 +19,7 @@ export default function SignUp() {
     watch,
   } = useForm();
   const [ typeUser, setTypeUser ] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState('');
   const { user, setUser } = useUserContext();
   const BASE_URL = "http://localhost:3001/";
   // "https://chat-socket-eb53a2dd15bb.herokuapp.com/" ||
@@ -34,6 +35,7 @@ export default function SignUp() {
       email: email,
       password: password,
       typeUser: typeUser,
+      phone: phoneNumber
     };
 
     const response = await axios.post(`${BASE_URL}users`, data)
@@ -46,6 +48,7 @@ export default function SignUp() {
     
     if(response.status === 201){
       setUser(data);
+      localStorage.setItem("user", user);
       if(typeUser === "cliente"){
         navigate("/home");
       }else{
@@ -154,7 +157,7 @@ export default function SignUp() {
                 </div>
               </div>
               <div className="mt-2">
-                <PhoneInput register={register} />
+                <PhoneInput phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber} register={register} />
               </div>
               {errors.phoneNUmber && <span>This field is required</span>}
             </div>

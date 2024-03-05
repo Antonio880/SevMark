@@ -27,7 +27,6 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
           day: item.dayOfMonth,
           monthYear: item.monthYear,
         }));
-        console.log(response.data);
         setTimeSelected(timesSelected);
       } catch (error) {
         console.error(error);
@@ -95,10 +94,6 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
           }
         });
 
-        if(response.status === 201) {
-          alert("Horário: " + data.hour + " marcado com sucesso!");
-          reservedHours.push(data.hour);
-        }
         try{
           const message = `Olá, estou reservando o seu espaço para o dia ${selectedDay.dayOfMonth}/${selectedDay.monthYear} no(s) horário(s) ${reservedHours.join(', ')}.`;
           const encodedMessage = encodeURIComponent(message);
@@ -203,8 +198,6 @@ const renderTimeSlots = (
   const availableTimeForSelectedDay = avaliableTimesForLocal.find(
     (time) => time.day === selectedDay.shortDay
   );
-
-  console.log(availableTimeForSelectedDay);
 
   if (availableTimeForSelectedDay) {
     const startTime = moment(parseInt(availableTimeForSelectedDay.startTime), "HH:mm");

@@ -4,10 +4,23 @@ import { useUserContext } from './Context/ContextUser';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import CreateLocationData from './pages/CreateLocationData';
+import { useEffect } from 'react';
 
 function App() {
  
-  const { user } = useUserContext();
+  const { user, setUser } = useUserContext();
+  useEffect(() => {
+    const cookieValue = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('user='))
+      .split('=')[1];
+
+    const userFromCookie = JSON.parse(decodeURIComponent(cookieValue));
+
+    if(userFromCookie){
+      setUser(userFromCookie);
+    }
+  }, [])
   return (
     <Routes>
       <Route path='/home' element={user ? <Home /> : <SignIn />}/>

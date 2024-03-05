@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-const PhoneInput = () => {
-  const [phoneNumber, setPhoneNumber] = useState('');
+const PhoneInput = ({ setPhoneNumber, phoneNumber }) => {
 
   // Função para formatar o número de telefone
   const formatPhoneNumber = (input) => {

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import DisplayMark from "./DisplayMark";
 import { TfiPencilAlt } from "react-icons/tfi";
 import { useUserContext } from "../Context/ContextUser";
+import { Link } from "react-router-dom";
 
 export default function Card({ data, onRemove }) {
   const { locationName, description, price, id, usuario_id } = data;
@@ -57,9 +58,11 @@ export default function Card({ data, onRemove }) {
           }
           {
             showButton && (
-              <div className="absolute left-[1000px] top-3">
-                <TfiPencilAlt size={28} />
-              </div>
+              <Link to={"/create-location"} state={{ data, sports }}>
+                <div className="absolute left-[1000px] top-3">
+                  <TfiPencilAlt size={28} />
+                </div>
+              </Link>
             )
           }
           <div className="w-[400px] sm:mx-3 mt-12 ">

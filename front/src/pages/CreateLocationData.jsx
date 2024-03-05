@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../Context/ContextUser";
 import { useLocalContext } from "../Context/ContextLocation";
-import axios from "axios";
+import axios, { Axios } from "axios";
 import ChangeDay from "../components/ChangeDay";
 import moment from "moment";
 
@@ -18,12 +19,14 @@ export default function CreateLocationData() {
   const [inputValue, setInputValue] = useState('');
   const [selectedDay, setSelectedDay] = useState(null);
   const { locals, setLocals } = useLocalContext();
-  const [ price, setPrice ] = useState(0);
+  const [price, setPrice] = useState(0);
   const { user } = useUserContext();
-  const [ images, setImages ] = useState([]);
+  const [images, setImages] = useState([]);
   const [selectedSports, setSelectedSports] = useState([]);
   const [sportsOptions, setSportsOptions] = useState([]);
-  const [ getNextSevenDays, setGetNextSevenDays ] = useState([]);
+  const [getNextSevenDays, setGetNextSevenDays] = useState([]);
+  const [typeRequisition, setTypeRequisition] = useState("post");
+  const location = useLocation()?.state || null;
   useEffect(() => {
     setSportsOptions([
       {
@@ -46,70 +49,84 @@ export default function CreateLocationData() {
 
     setGetNextSevenDays([
       {
-        id:1,
-        name:"Mon",
-        timeStart: "07:00",
-        timeEnd: "23:00"
+        id: 1,
+        day: "Mon",
+        startTime: "07:00",
+        endTime: "23:00"
       },
       {
-        id:2,
-        name:"Tue",
-        timeStart: "07:00",
-        timeEnd: "23:00"
+        id: 2,
+        day: "Tue",
+        startTime: "07:00",
+        endTime: "23:00"
       },
       {
-        id:3,
-        name:"Wed",
-        timeStart: "07:00",
-        timeEnd: "23:00"
+        id: 3,
+        day: "Wed",
+        startTime: "07:00",
+        endTime: "23:00"
       },
       {
-        id:4,
-        name:"Thu",
-        timeStart: "07:00",
-        timeEnd: "23:00"
+        id: 4,
+        day: "Thu",
+        startTime: "07:00",
+        endTime: "23:00"
       },
       {
-        id:5,
-        name:"Fri",
-        timeStart: "07:00",
-        timeEnd: "23:00"
+        id: 5,
+        day: "Fri",
+        startTime: "07:00",
+        endTime: "23:00"
       },
       {
-        id:6,
-        name:"Sat",
-        timeStart: "07:00",
-        timeEnd: "23:00"
+        id: 6,
+        day: "Sat",
+        startTime: "07:00",
+        endTime: "23:00"
       },
       {
-        id:7,
-        name:"Sun",
-        timeStart: "07:00",
-        timeEnd: "23:00"
+        id: 7,
+        day: "Sun",
+        startTime: "07:00",
+        endTime: "23:00"
       },
     ])
+    const fetchAvaliableTimesForLocal = async () => {
+      await axios.get(
+        `http://localhost:3001/avaliableTimes/busca?localId=${location.data.id}`
+      )
+        .then(response => {
+          setGetNextSevenDays(response.data)
+        });
+    };
+    if (location?.data) {
+      console.log(location.data);
+      setInputValue(new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+      }).format(Number(location.data.price)));
+      setTypeRequisition("put");
+      fetchAvaliableTimesForLocal();
+    }
   }, []);
-
-  useEffect(() => {
-    console.log(user.id)
-  }, [user])
 
   const onSubmit = async (data) => {
     const numericPrice = Number(data.price.replace(/[^0-9]/g, ''));
-    
-    const dataWithUserId = { 
+
+    const dataWithUserId = {
       locationName: data.locationName,
-      price: numericPrice * 0.01,
+      price: numericPrice * 0.0001,
       description: data.description,
       obs: data.obs,
       usuario_id: user.id
       /* localImage: data.imageUpload */
-     };
-     
+    };
+
     try {
       const response = await axios.post("http://localhost:3001/locals", {
         locationName: data.locationName,
-        price: numericPrice * 0.01,
+        price: numericPrice,
         description: data.description,
         obs: data.obs,
         usuario_id: user.id,
@@ -120,7 +137,7 @@ export default function CreateLocationData() {
           .catch(err => console.error(err));
         selectedSports.map(async (sportId) => {
           const selectedSport = sportsOptions.find((sport) => sport.id == sportId);
-        
+
           if (selectedSport) {
             const dataSport = {
               name: selectedSport.name,
@@ -138,16 +155,16 @@ export default function CreateLocationData() {
           await axios.post("http://localhost:3001/images", image);
         }) */
         const availableTimes = getNextSevenDays.map(day => ({
-          day: day.name,
-          startTime: day.timeStart,
-          endTime: day.timeEnd,
+          day: day.day,
+          startTime: day.startTime,
+          endTime: day.endTime,
           local_id: returnLocal.data[0].id // Isso será preenchido posteriormente
         }));
-  
+
         await axios.post("http://localhost:3001/avaliableTimes", {
           availableTimes
         }).catch((e) => alert("Erro ao definir os Horários Disponíveis - " + e));
-        
+
         setLocals([...locals, dataWithUserId]);
         navigate("/home");
       } else {
@@ -234,6 +251,7 @@ export default function CreateLocationData() {
                       {...register("locationName", {
                         required: "Campo obrigatório",
                       })}
+                      defaultValue={location?.data ? location.data?.locationName : ""}
                     />
                   </div>
                 </div>
@@ -286,7 +304,7 @@ export default function CreateLocationData() {
                           autoComplete="price"
                           className="flex-1  border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                           {...register("description", { required: "Campo obrigatório" })}
-                        
+                          defaultValue={location?.data != null ? location.data?.description : ""}
                         />
                       </div>
                       {errors.location && (
@@ -321,7 +339,17 @@ export default function CreateLocationData() {
                         <div className="flex bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md mx-1 mb-2 px-2 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-60 duration-200 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" key={index}>
                           {sportsOptions.find((sport) => sport.id == sportId)?.name}
                           <div className="w-5 flex pl-2 items-center">
-                            <img src="xIcon.png" alt="fecha icone" onClick={() => {handleRemoveSport(sportId)}} />
+                            <img src="xIcon.png" alt="fecha icone" onClick={() => { handleRemoveSport(sportId) }} />
+                          </div>
+                        </div>
+                      ))}
+
+                    {location?.sports.length > 0 &&
+                      location?.sports.map((sportId, index) => (
+                        <div className="flex bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md mx-1 mb-2 px-2 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-60 duration-200 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" key={index}>
+                          {sportsOptions.find((sport) => sport.id == sportId.id)?.name}
+                          <div className="w-5 flex pl-2 items-center">
+                            <img src="xIcon.png" alt="fecha icone" onClick={() => { handleRemoveSport(sportId.id) }} />
                           </div>
                         </div>
                       ))}
@@ -344,56 +372,62 @@ export default function CreateLocationData() {
                       rows="3"
                       className="block w-full  rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       {...register("obs")}
+                      defaultValue={location?.data ? location.data.obs : ""}
                     ></textarea>
                   </div>
                 </div>
                 <div className="pl-16 flex basis-1/2">
-                    <div className="flex flex-col">
-                      <div className="flex">
-                        <label htmlFor="Available Times" className="flex items-center my-2 pr-3 text-sm font-medium text-gray-900">
-                          Horários Disponíveis:
-                        </label>
-                        <div class="flex bg-white w-[380px] sm:w-[550px] shadow-md justify-start md:justify-center rounded-lg overflow-x-auto mx-auto h-16 py-3 px-2  ">
-                          {getNextSevenDays.map((day) => (
-                              <ChangeDay
-                                key={day.shortDay}
-                                shortDay={day.name}
-                                handleDayClick={handleDayClick}
-                                selectedDay={selectedDay}
-                              />
-                            ))}
-                        </div>
-                      </div>
-                      <div className="flex justify-center items-center h-14">
-                        {
-                          selectedDay && (
-                            <div className="flex justify-between w-[300px]">
-                              <div className="flex">
-                                <h3>Inicio:</h3>
-                                <select  
-                                  defaultValue={getNextSevenDays.find(day => day.name === selectedDay)?.timeStart}
-                                  onChange={(e) => handleSelectTimeStart(e.target.value)} 
-                                >
-                                  {renderTimeSlots().map((data, index) => (
-                                      <option key={index} value={data}>{data}</option>
-                                  ))}
-                                </select>
-                              </div>
-                              <div className="flex">
-                                <h3>Encerramento:</h3>
-                                <select 
-                                  defaultValue={getNextSevenDays.find(day => day.name === selectedDay)?.timeEnd}>
-                                  {renderTimeSlots().map((data, index) => (
-                                      <option key={index} value={data}>{data}</option>
-                                  ))}
-                                </select>
-                              </div>
-                            </div>
-                          )
-                        }
+                  <div className="flex flex-col">
+                    <div className="flex">
+                      <label htmlFor="Available Times" className="flex items-center my-2 pr-3 text-sm font-medium text-gray-900">
+                        Horários Disponíveis:
+                      </label>
+                      <div class="flex bg-white w-[380px] sm:w-[550px] shadow-md justify-start md:justify-center rounded-lg overflow-x-auto mx-auto h-16 py-3 px-2  ">
+                        {getNextSevenDays.map((day) => (
+                          <ChangeDay
+                            key={day.shortDay}
+                            shortDay={day.day}
+                            handleDayClick={handleDayClick}
+                            selectedDay={selectedDay}
+                          />
+                        ))}
                       </div>
                     </div>
+                    <div className="flex justify-center items-center h-14">
+                      {
+                        selectedDay && (
+                          <div className="flex justify-between w-[300px]">
+                            <div className="flex">
+                              <h3>Inicio:</h3>
+                              <select
+                                onChange={(e) => handleSelectTimeStart(e.target.value)}
+                              >
+                                {renderTimeSlots().map((data, index) => {
+                                  if (getNextSevenDays.find(days => days.startTime === data && days.day === selectedDay)?.startTime) return <option key={index} value={data}>{data}</option>
+                                })}
+                                {renderTimeSlots().map((data, index) => (
+                                  <option key={index} value={data}>{data}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="flex">
+                              <h3>Encerramento:</h3>
+                              <select
+                                >
+                                {renderTimeSlots().map((data, index) => {
+                                  if (getNextSevenDays.find(days => days.endTime === data && days.day === selectedDay)?.endTime) return <option key={index} value={data}>{data}</option>
+                                })}
+                                {renderTimeSlots().map((data, index) => (
+                                  <option key={index} value={data}>{data}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        )
+                      }
+                    </div>
                   </div>
+                </div>
               </div>
               <div className="px-20 md:px-44">
                 <label
@@ -438,11 +472,11 @@ export default function CreateLocationData() {
                       PNG, JPG, GIF up to 10MB
                     </p>
                   </div>
-                  
+
                 </div>
               </div>
             </div>
-            
+
             <div className="mt-6 mr-44 flex items-center justify-end gap-x-6">
               <button
                 type="button"
@@ -465,21 +499,21 @@ export default function CreateLocationData() {
   );
 }
 const renderTimeSlots = () => {
-    const timeSlots = [];
-    const startTime = moment().startOf("day").hour(1); // hora inicial
-    const endTime = moment().startOf("day").hour(24); // hora final
-  
-    let currentTime = startTime.clone();
-    while (currentTime.isBefore(endTime)) {
-      const time = currentTime.format("HH:mm");
-      // const isMarked = timeSelected.includes(time);
-      // const isAvailable = !isMarked || selectedClockDay.includes(time);
-      timeSlots.push(
-        time
-      );
-  
-      currentTime = currentTime.add(1, "hour");
-    }
-  
-    return timeSlots;
-  };
+  const timeSlots = [];
+  const startTime = moment().startOf("day").hour(1); // hora inicial
+  const endTime = moment().startOf("day").hour(24); // hora final
+
+  let currentTime = startTime.clone();
+  while (currentTime.isBefore(endTime)) {
+    const time = currentTime.format("HH:mm");
+    // const isMarked = timeSelected.includes(time);
+    // const isAvailable = !isMarked || selectedClockDay.includes(time);
+    timeSlots.push(
+      time
+    );
+
+    currentTime = currentTime.add(1, "hour");
+  }
+
+  return timeSlots;
+};
