@@ -16,7 +16,7 @@ import { useLocalContext } from "../Context/ContextLocation";
 import MarkedCalendarClient from "../components/MarkedCalendar";
 
 export default function Home() {
-  const { user, setUser } = useUserContext();
+  const { user } = useUserContext();
   const { locals, setLocals } = useLocalContext();
   const [selectedSport, setSelectedSport] = useState([]);
   const [showCalendar, setShowCalendar] = useState("home");

@@ -6,5 +6,6 @@ const routes = express.Router();
 routes.get('/sports', SportController.listSports);
 routes.get("/sports/busca", SportController.findSportByLocalId);
 routes.post('/sports',SportController.createSport);
+routes.put("/sports/:id", SportController.updateSport);
 
 export default routes;

@@ -11,6 +11,7 @@ export default function Card({ data, onRemove }) {
   const [sports, setSports] = useState([]);
   const [showDisplayMark, setShowDisplayMark] = useState(false);
   const [ showButton, setShowButton ] = useState(false);
+  const [ images, setImages ] = useState([]);
 
   useEffect(() => {
     async function fetchSports() {
@@ -24,12 +25,21 @@ export default function Card({ data, onRemove }) {
       }
     }
 
+    async function fetchImages() {
+        await axios.get(`http://localhost:3001/images/busca?local_id=${id}`)
+          .then(response => setImages(response.data))
+          .catch(err => console.error(err));
+    }
+
     fetchSports();
+    fetchImages();
   }, []);
 
   const handleRemoveClick = () => {
     onRemove(id);
   };
+
+  useEffect(() => {console.log(images)}, [images])
 
   return (
     <div  >
@@ -45,7 +55,7 @@ export default function Card({ data, onRemove }) {
           <div className="">
             <img
               className="rounded-md h-full sm:w-[240px]"
-              src="https://source.unsplash.com/random/200x110"
+              src={`${images[0]?.src}`}
               alt=""
             />
           </div>

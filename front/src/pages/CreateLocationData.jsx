@@ -26,6 +26,7 @@ export default function CreateLocationData() {
   const [sportsOptions, setSportsOptions] = useState([]);
   const [getNextSevenDays, setGetNextSevenDays] = useState([]);
   const [typeRequisition, setTypeRequisition] = useState("post");
+  const [ sportsBeforeLocal, setSportsBeforeLocal ] = useState([]);
   const location = useLocation()?.state || null;
   useEffect(() => {
     setSportsOptions([
@@ -100,12 +101,13 @@ export default function CreateLocationData() {
         });
     };
     if (location?.data) {
-      console.log(location.data);
       setInputValue(new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL',
         minimumFractionDigits: 2,
       }).format(Number(location.data.price)));
+      setSelectedSports(location.sports);
+      setSportsBeforeLocal(location.sports);
       setTypeRequisition("put");
       fetchAvaliableTimesForLocal();
     }
@@ -116,7 +118,7 @@ export default function CreateLocationData() {
 
     const dataWithUserId = {
       locationName: data.locationName,
-      price: numericPrice * 0.0001,
+      price: numericPrice * 0.01,
       description: data.description,
       obs: data.obs,
       usuario_id: user.id
@@ -124,13 +126,13 @@ export default function CreateLocationData() {
     };
 
     try {
-      const response = await axios.post("http://localhost:3001/locals", {
-        locationName: data.locationName,
-        price: numericPrice,
-        description: data.description,
-        obs: data.obs,
-        usuario_id: user.id,
-      });
+
+      let response;
+      if (typeRequisition === "post") {
+        response = await axios.post("http://localhost:3001/locals", dataWithUserId);
+      } else if (typeRequisition === "put" && location?.data?.id) {
+        response = await axios.put(`http://localhost:3001/locals/${location.data.id}`, dataWithUserId);
+      }
 
       if (response.status === 201) {
         const returnLocal = await axios.get(`http://localhost:3001/locals/busca?name=${dataWithUserId.locationName}&description=${dataWithUserId.description}`)
@@ -144,16 +146,26 @@ export default function CreateLocationData() {
               local_id: returnLocal.data[0].id,
             };
             // Requisição para criar o esporte associado ao local
-            await axios.post("http://localhost:3001/sports", dataSport);
+            
+            if (typeRequisition === "post") {
+              await axios.post("http://localhost:3001/sports", dataSport);
+            } else if (typeRequisition === "put" && selectedSports !== sportsBeforeLocal) {
+              
+            }
           }
         });
-        /* data.imageUpload.map(async (image) => {
-          const imageWithLocalId = {
-            image,
-            local_id: returnLocal.data.id
-          }
-          await axios.post("http://localhost:3001/images", image);
-        }) */
+        await Promise.all(images.map(async (image) => {
+    
+          var formData = new FormData();
+          formData.append("file",image);
+          formData.append("localId", returnLocal.data[0].id);
+          
+          return axios.post("http://localhost:3001/images", formData, {
+            headers:{
+                "Content-Type":"multipart/form-data"
+            }
+        });
+        }));
         const availableTimes = getNextSevenDays.map(day => ({
           day: day.day,
           startTime: day.startTime,
@@ -178,15 +190,20 @@ export default function CreateLocationData() {
 
   const handleSelectSports = (event) => {
     const selectedSportId = event.target.value;
-
     if (!selectedSports.includes(selectedSportId)) {
       setSelectedSports([...selectedSports, selectedSportId]);
     }
   };
 
+  useEffect(() => {
+    console.log(images)
+  }, [images]);
+
   const handleRemoveSport = (sportId) => {
-    const updatedSports = selectedSports.filter((id) => id !== sportId);
+    const updatedSports = selectedSports.filter((sport) => sport !== sportId);
+    console.log(updatedSports, sportId)
     setSelectedSports(updatedSports);
+    
   };
 
   const handlePriceChange = (event) => {
@@ -337,22 +354,22 @@ export default function CreateLocationData() {
                     {selectedSports.length > 0 &&
                       selectedSports.map((sportId, index) => (
                         <div className="flex bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md mx-1 mb-2 px-2 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-60 duration-200 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" key={index}>
-                          {sportsOptions.find((sport) => sport.id == sportId)?.name}
+                          {typeRequisition === "post" ? sportsOptions.find((sport) => sport.id == sportId)?.name : sportId?.name}
                           <div className="w-5 flex pl-2 items-center">
-                            <img src="xIcon.png" alt="fecha icone" onClick={() => { handleRemoveSport(sportId) }} />
+                            <img src="xIcon.png" alt="fecha icone" onClick={() => { handleRemoveSport(sportId); console.log(sportId) }} />
                           </div>
                         </div>
                       ))}
 
-                    {location?.sports.length > 0 &&
+                    {/* {location?.sports.length > 0 &&
                       location?.sports.map((sportId, index) => (
                         <div className="flex bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md mx-1 mb-2 px-2 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-60 duration-200 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" key={index}>
-                          {sportsOptions.find((sport) => sport.id == sportId.id)?.name}
+                          {sportId?.name}
                           <div className="w-5 flex pl-2 items-center">
                             <img src="xIcon.png" alt="fecha icone" onClick={() => { handleRemoveSport(sportId.id) }} />
                           </div>
                         </div>
-                      ))}
+                      ))} */}
                   </div>
                 </div>
               </div>
@@ -413,7 +430,7 @@ export default function CreateLocationData() {
                             <div className="flex">
                               <h3>Encerramento:</h3>
                               <select
-                                >
+                              >
                                 {renderTimeSlots().map((data, index) => {
                                   if (getNextSevenDays.find(days => days.endTime === data && days.day === selectedDay)?.endTime) return <option key={index} value={data}>{data}</option>
                                 })}
@@ -461,8 +478,9 @@ export default function CreateLocationData() {
                           name="file"
                           type="file"
                           className="sr-only"
-                          onClick={(e) => {
-                            setImages([...images, e.target.files[0]])
+                          onChange={(e) => {
+                            if(e.target.files[0])
+                              setImages([...images, e.target.files[0]]);
                           }}
                         />
                       </label>

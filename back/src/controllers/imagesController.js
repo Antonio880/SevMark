@@ -12,14 +12,30 @@ class ImageController {
 
   static async createImage(req, res) {
     try {
-      const { name } = req.body;
-  
+      console.log(req.body);
+      const name = req.file.originalname;
+      
       const file = req.file;
   
-      await image.create({ name, src: file.path });
+      const picture = await image.create({ name, src: file.path, local_id: req.body.localId });
       res.status(201).json(picture);
     } catch (err) {
-      res.status(500).json({ message: "Erro ao salvar a imagem." });
+      res.status(500).json({ message: "Erro ao salvar a imagem - " + err });
+    }
+  }
+
+  static async findImagesByLocalId(req, res) {
+    try {
+      const local_id = req.query.local_id;
+      const imageFound = await image.findOne({ local_id });
+      
+      if (imageFound) {
+        res.status(200).json(imageFound);
+      } else {
+        res.status(404).json({ message: 'Image not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: `${error.message} - Failed to retrieve Image` });
     }
   }
   

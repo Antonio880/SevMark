@@ -6,6 +6,7 @@ const routes = express.Router();
 
 routes.post("/images", upload.single("file"), ImageController.createImage);
 routes.get("/images", ImageController.listImages);
+routes.get("/images/busca", ImageController.findImagesByLocalId);
 routes.delete("/images/:id", ImageController.removeImage);
 
 export default routes;

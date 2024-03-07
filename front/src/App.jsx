@@ -10,23 +10,27 @@ function App() {
  
   const { user, setUser } = useUserContext();
   useEffect(() => {
-    const cookieValue = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('user='))
-      .split('=')[1];
+    try {
+      const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('user='))
+        ?.split('=')[1];
 
-    const userFromCookie = JSON.parse(decodeURIComponent(cookieValue));
-
-    if(userFromCookie){
-      setUser(userFromCookie);
+      if (cookieValue) {
+        const userFromCookie = JSON.parse(decodeURIComponent(cookieValue));
+        setUser(userFromCookie);
+      }
+    } catch (error) {
+      // Tratar o erro quando não há nada nos cookies
+      console.error('Erro ao processar cookies:', error);
     }
   }, [])
   return (
     <Routes>
       <Route path='/home' element={user ? <Home /> : <SignIn />}/>
-      <Route path='/' element={<SignIn />}/>
-      <Route path='*' element={<SignIn />}/>
-      <Route path='/sign-up' element={<SignUp />}/>
+      <Route path='/' element={user ? <Home /> : <SignIn />}/>
+      <Route path='*' element={user ? <Home /> : <SignIn />}/>
+      <Route path='/sign-up' element={user ? <Home /> : <SignUp />}/>
       <Route path='/create-location' element={user ? <CreateLocationData /> : <SignIn />} />
     </Routes>
   )

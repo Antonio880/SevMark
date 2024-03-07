@@ -37,7 +37,17 @@ const sport = {
           });
         });
       },
-
+      findByIdAndUpdate: async (id, data) => {
+        return new Promise((resolve, reject) => {
+          db.query('UPDATE sports SET ? WHERE id = ?', [data, id], (error, results) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(results);
+            }
+          });
+        });
+      },
       query: async (sql, values) => {
         return new Promise((resolve, reject) => {
           db.query(sql, values, (error, results) => {

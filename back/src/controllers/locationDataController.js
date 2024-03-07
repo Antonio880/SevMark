@@ -116,6 +116,16 @@ class LocationDataController {
     }
   }
 
+  static async updateLocal(req, res) {
+    try {
+      const id = req.params.id;
+      const localUpdated = await local.findByIdAndUpdate(id, req.body);
+      res.status(200).json({ message: "Local updated", local: localUpdated });
+    } catch (error) {
+      res.status(500).json({ message: `${error.message} - Update failed` });
+    }
+  }
+
   static async deleteLocationData(req, res) {
     try {
       const id = req.params.id;

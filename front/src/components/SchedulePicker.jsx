@@ -87,12 +87,16 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
           local_id: id,
           usuario_id: user.id
         };
-        const response = await axios.post(`http://localhost:3001/marks`, data)
+        await axios.post(`http://localhost:3001/marks`, data)
+        .then(() => {
+            reservedHours.push(data.hour);
+        })
         .catch((e) => {
           if(e.response.status === 409){
             alert("O Horário " + data.hour + data.dayOfMonth + data.monthYear  + " ja está marcado!");
           }
         });
+      }
 
         try{
           const message = `Olá, estou reservando o seu espaço para o dia ${selectedDay.dayOfMonth}/${selectedDay.monthYear} no(s) horário(s) ${reservedHours.join(', ')}.`;
@@ -106,7 +110,7 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
           alert("Erro ao mandar a mensagem para o dono do local");
           console.error(e);
         }
-      }
+      
     } catch (e) {
       console.error(e);
     }

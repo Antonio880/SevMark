@@ -20,10 +20,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(morgan("dev"));
 
-app.use(
-    "/files",
-    express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
-  );
+app.use("/uploads",express.static("./uploads"))
 
   app.use(cors({
     origin: "http://localhost:5173"

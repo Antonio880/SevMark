@@ -8,9 +8,18 @@ const ClockMark = ({ time, setSelectedClock, selectedClock, selectedClockDay }) 
   const handleClick = () => {
     if (isAvailable) {
       setClicked(!clicked);
-      setSelectedClock([...selectedClock, time]);
+      if(!selectedClock.find((timeSelected) => timeSelected === time)){
+        setSelectedClock([...selectedClock, time]);
+      }else{
+        const updateSelectedClock = selectedClock.filter((time) => time !== time);
+        setSelectedClock(updateSelectedClock);
+      }
     }
   };
+
+  useEffect(() => {
+    console.log(selectedClock);
+  }, [selectedClock])
 
   return (
     <div

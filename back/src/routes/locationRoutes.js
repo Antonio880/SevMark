@@ -8,7 +8,7 @@ routes.get("/locals/sportName", LocationDataController.getLocationsBySport);
 routes.get("/locals/usuario_id", LocationDataController.findLocationByUserId);
 routes.get('/locals/busca', LocationDataController.findLocationByName);
 routes.get('/locals/:id', LocationDataController.findLocationDataById);
-// routes.post('/user', LocationDataController.getUser);
+routes.put('/locals/:id', LocationDataController.updateLocal);
 
 routes.post('/locals', LocationDataController.createLocationData);
 // routes.put('/users/:id', LocationDataController.updateUser);
