@@ -24,16 +24,13 @@ export default function SwiperImages({ fotos }) {
           "--swiper-navigation-color": "#fdba74"
         }}
       >
-        <SwiperSlide>
-          <div className="flex justify-center">
-            <img src="quadra.jpg" alt="" className="w-[450px]" />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="flex justify-center ">
-            <img src="quadra_unifor.jpg" alt="" className="w-[450px]" />
-          </div>
-        </SwiperSlide>
+        {fotos.map((foto) => (
+          <SwiperSlide>
+            <div className="flex justify-center">
+              <img src={foto.src} alt="" className="w-[450px]" />
+            </div>
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );

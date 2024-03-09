@@ -48,6 +48,21 @@ class SportController {
       res.status(500).json({ message: `${error.message} - Update failed` });
     }
   }
+
+  static async deleteSportByLocalId(req, res) {
+    try {
+      const local_id = req.query.local_id;
+      const sportFound = await sport.findOne({ local_id });
+      if (sportFound) {
+        await sport.deleteMany({ local_id });
+        res.status(200).json({ message: "Sport delete with sucess" });
+      } else {
+        res.status(404).json({ message: 'Sport not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: `${error.message} - Failed to retrieve Sport` });
+    }
+  }
 }
 
 export default SportController;

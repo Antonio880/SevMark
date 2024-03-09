@@ -39,8 +39,6 @@ export default function Card({ data, onRemove }) {
     onRemove(id);
   };
 
-  useEffect(() => {console.log(images)}, [images])
-
   return (
     <div  >
       <div   
@@ -106,7 +104,7 @@ export default function Card({ data, onRemove }) {
     </div>
     {
         showDisplayMark && (
-          <DisplayMark data={data} setShowDisplayMark={setShowDisplayMark} />
+          <DisplayMark data={data} images={images} setShowDisplayMark={setShowDisplayMark} />
         )
       }
     </div>

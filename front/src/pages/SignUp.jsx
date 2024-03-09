@@ -35,7 +35,7 @@ export default function SignUp() {
       email: email,
       password: password,
       typeUser: typeUser,
-      phone: phoneNumber
+      phone: phoneNumber.replace(/\D/g, '')
     };
 
     const response = await axios.post(`${BASE_URL}users`, data)

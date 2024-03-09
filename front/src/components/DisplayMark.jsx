@@ -3,10 +3,9 @@ import SwiperImages from "./SwiperImages";
 import SchedulePicker from "./SchedulePicker";
 import axios from "axios";
 import { useState, useEffect } from "react";
-export default function DisplayMark({ data, setShowDisplayMark }) {
+export default function DisplayMark({ data, images, setShowDisplayMark }) {
   const { obs, id, usuario_id } = data;
   const [ phone, setPhone ] = useState("");
-  const fotos = ["quadra_unifor.jpg", "quadra.jpg"];
 
   useEffect(() => {
     axios.get(`http://localhost:3001/users/${usuario_id}`)
@@ -16,7 +15,7 @@ export default function DisplayMark({ data, setShowDisplayMark }) {
 
   return (
     <div className="h-[800px] w-[400px] sm:w-[590px] md:w-[700px] lg:w-[1100px] py-2 bg-slate-100 rounded-md">
-      <SwiperImages fotos={fotos} />
+      <SwiperImages fotos={images} />
       <div className="flex flex-col">
         <div className="h-16 overflow-y-auto px-1 pt-4">
           {

@@ -3,6 +3,7 @@ import { local } from "../models/locationData.js";
 import { sport } from "../models/sport.js";
 import { mark } from "../models/mark.js";
 import { availableTime } from "../models/avaliableTimes.js";
+import { image } from "../models/images.js" 
 
 class LocationDataController {
   static async listLocationData(req, res) {
@@ -120,7 +121,7 @@ class LocationDataController {
     try {
       const id = req.params.id;
       const localUpdated = await local.findByIdAndUpdate(id, req.body);
-      res.status(200).json({ message: "Local updated", local: localUpdated });
+      res.status(201).json({ message: "Local updated", local: localUpdated });
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Update failed` });
     }
@@ -138,6 +139,7 @@ class LocationDataController {
       const markFound = await mark.findOne({ local_id: id });
       const sportFound = await sport.findOne({ local_id: id });
       const avaliableTimeFound = await availableTime.findOne({ local_id: id });
+      const imageFound = await image.findOne({ local_id: id });
   
       // Efficiently collect all deletion promises using Promise.all
       const deletionPromises = [];
@@ -149,6 +151,9 @@ class LocationDataController {
       }
       if (avaliableTimeFound) {
         deletionPromises.push(availableTime.deleteMany({ local_id: id }));
+      }
+      if(imageFound){
+        deletionPromises.push(image.deleteMany({ local_id: id }));
       }
   
       // Ensure all deletions complete before proceeding

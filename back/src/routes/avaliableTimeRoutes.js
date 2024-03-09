@@ -10,7 +10,7 @@ routes.get('/avaliableTimes/:id', AvailableTimeController.findAvailableTimeById)
 // routes.post('/user', AvailableTimeController.getUser);
 
 routes.post('/avaliableTimes', AvailableTimeController.createAvailableTimes);
-// routes.put('/users/:id', AvailableTimeController.updateUser);
+routes.put('/avaliableTimes', AvailableTimeController.updateAvailableTime);
 // routes.delete('/users/:id', AvailableTimeController.deleteUser);
 
 

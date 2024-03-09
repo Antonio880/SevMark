@@ -26,7 +26,7 @@ export default function CreateLocationData() {
   const [sportsOptions, setSportsOptions] = useState([]);
   const [getNextSevenDays, setGetNextSevenDays] = useState([]);
   const [typeRequisition, setTypeRequisition] = useState("post");
-  const [ sportsBeforeLocal, setSportsBeforeLocal ] = useState([]);
+  const [sportsBeforeLocal, setSportsBeforeLocal] = useState([]);
   const location = useLocation()?.state || null;
   useEffect(() => {
     setSportsOptions([
@@ -137,34 +137,37 @@ export default function CreateLocationData() {
       if (response.status === 201) {
         const returnLocal = await axios.get(`http://localhost:3001/locals/busca?name=${dataWithUserId.locationName}&description=${dataWithUserId.description}`)
           .catch(err => console.error(err));
+        console.log("0")
         selectedSports.map(async (sportId) => {
-          const selectedSport = sportsOptions.find((sport) => sport.id == sportId);
-
+          const selectedSport = sportsOptions.find((sport) => sport.name == sportId.name);
+          console.log(selectedSport)
           if (selectedSport) {
             const dataSport = {
               name: selectedSport.name,
               local_id: returnLocal.data[0].id,
             };
             // Requisição para criar o esporte associado ao local
-            
-            if (typeRequisition === "post") {
+            if(typeRequisition === 'post'){
               await axios.post("http://localhost:3001/sports", dataSport);
-            } else if (typeRequisition === "put" && selectedSports !== sportsBeforeLocal) {
-              
             }
+            else if (typeRequisition === 'put' && selectedSports !== sportsBeforeLocal) {
+              await axios.delete(`http://localhost:3001/sports/busca?local_id=${returnLocal.data[0].id}`);
+              await axios.post("http://localhost:3001/sports", dataSport);
+            }
+            
           }
         });
         await Promise.all(images.map(async (image) => {
-    
+
           var formData = new FormData();
-          formData.append("file",image);
+          formData.append("file", image);
           formData.append("localId", returnLocal.data[0].id);
-          
+
           return axios.post("http://localhost:3001/images", formData, {
-            headers:{
-                "Content-Type":"multipart/form-data"
+            headers: {
+              "Content-Type": "multipart/form-data"
             }
-        });
+          });
         }));
         const availableTimes = getNextSevenDays.map(day => ({
           day: day.day,
@@ -173,9 +176,16 @@ export default function CreateLocationData() {
           local_id: returnLocal.data[0].id // Isso será preenchido posteriormente
         }));
 
-        await axios.post("http://localhost:3001/avaliableTimes", {
-          availableTimes
-        }).catch((e) => alert("Erro ao definir os Horários Disponíveis - " + e));
+        if (typeRequisition === "post") {
+          await axios.post("http://localhost:3001/avaliableTimes", {
+            availableTimes
+          }).catch((e) => alert("Erro ao definir os Horários Disponíveis - " + e));
+        }else if(typeRequisition === "put"){
+          console.log("teste")
+          await axios.put("http://localhost:3001/avaliableTimes", {
+            availableTimes
+          }).catch((e) => alert("Erro ao atualizar os Horários Disponíveis - " + e));
+        }
 
         setLocals([...locals, dataWithUserId]);
         navigate("/home");
@@ -187,6 +197,10 @@ export default function CreateLocationData() {
       alert("Erro ao criar o local");
     }
   };
+
+  useEffect(() => {
+    console.log(selectedSports, sportsBeforeLocal, typeRequisition)
+  }, [selectedSports, sportsBeforeLocal])
 
   const handleSelectSports = (event) => {
     const selectedSportId = event.target.value;
@@ -203,7 +217,7 @@ export default function CreateLocationData() {
     const updatedSports = selectedSports.filter((sport) => sport !== sportId);
     console.log(updatedSports, sportId)
     setSelectedSports(updatedSports);
-    
+
   };
 
   const handlePriceChange = (event) => {
@@ -470,24 +484,23 @@ export default function CreateLocationData() {
                     <div className="mt-4 flex text-sm leading-6 text-gray-600">
                       <label
                         htmlFor="file-upload"
-                        className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                        className="relative flex justify-center cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                       >
-                        <span>Upload a file</span>
+                        <span className="">Coloque a imagem aqui</span>
                         <input
                           id="file-upload"
                           name="file"
                           type="file"
                           className="sr-only"
                           onChange={(e) => {
-                            if(e.target.files[0])
+                            if (e.target.files[0])
                               setImages([...images, e.target.files[0]]);
                           }}
                         />
                       </label>
-                      <p className="pl-1">or drag and drop</p>
                     </div>
                     <p className="text-xs leading-5 text-gray-600">
-                      PNG, JPG, GIF up to 10MB
+                      Lembrando que a primeira imagem será a imagem padrão
                     </p>
                   </div>
 

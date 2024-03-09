@@ -56,10 +56,20 @@ class AvailableTimeController {
 
   static async updateAvailableTime(req, res) {
     try {
-      const id = req.params.id;
-      const newData = req.body;
-      await availableTime.findByIdAndUpdate(id, newData);
-      res.status(200).json({ message: 'Updated successfully' });
+      console.log(req.body.avaliableTimes);
+      await availableTime.deleteMany({ local_id: req.body.avaliableTimes[0].local_id });
+      
+      const availableTimesCreate = req.body.availableTimes.map(async (time) => {
+        const newAvailableTime = await availableTime.create({
+          day: time.day,
+          startTime: time.startTime,
+          endTime: time.endTime,
+          local_id: time.local_id
+        });
+        return newAvailableTime;
+      });
+      
+      res.status(200).json({ message: 'Updated successfully', availableTimesCreate });
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Failed to update available time` });
     }

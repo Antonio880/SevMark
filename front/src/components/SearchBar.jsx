@@ -7,6 +7,7 @@ export default function SearchBar() {
         <TextField
           id="outlined-basic"
           label="Procure Aqui"
+          disabled
           variant="outlined"
           sx={{ 
               width: "450px", 
@@ -18,7 +19,7 @@ export default function SearchBar() {
       </div>
       <div className="flex pt-2 sm:pt-0">
         <Button
-          disabled={"true"}
+          disabled={true}
           variant="contained"
           sx={{
             backgroundColor: "rgb(255, 173, 113)",
