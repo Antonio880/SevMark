@@ -27,7 +27,7 @@ export default function SwiperImages({ fotos }) {
         {fotos.map((foto) => (
           <SwiperSlide>
             <div className="flex justify-center">
-              <img src={foto.src} alt="" className="w-[450px]" />
+              <img src={foto?.src.replace(/^.*\\uploads\\/, 'uploads\\')} alt="" className="sm:w-[400px] md:w-[500px]" />
             </div>
           </SwiperSlide>
         ))}

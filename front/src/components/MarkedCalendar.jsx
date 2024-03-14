@@ -96,7 +96,7 @@ export default function MarkedCalendarClient({}) {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <div class="flex bg-white w-[800px] shadow-md justify-start md:justify-center rounded-lg overflow-x-auto mx-auto py-4 px-2  md:mx-12">
+      <div class="flex bg-white w-[390px] sm:w-[800px] shadow-md justify-center md:justify-center rounded-lg overflow-x-auto px-4 py-4  md:mx-12">
       {getNextSevenDays().map((day) => (
           <DayMarked
             key={day.shortDay}

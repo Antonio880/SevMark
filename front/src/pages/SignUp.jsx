@@ -47,7 +47,9 @@ export default function SignUp() {
       });
     
     if(response.status === 201){
-      setUser(data);
+      await axios.post("http://localhost:3001/user", data)
+        .then(response => setUser(response.data.user))
+        .catch(e => console.error(e));
       localStorage.setItem("user", user);
       if(typeUser === "cliente"){
         navigate("/home");

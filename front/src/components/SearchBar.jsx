@@ -7,7 +7,6 @@ export default function SearchBar() {
         <TextField
           id="outlined-basic"
           label="Procure Aqui"
-          disabled
           variant="outlined"
           sx={{ 
               width: "450px", 

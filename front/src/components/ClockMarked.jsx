@@ -33,18 +33,18 @@ export default function ClockMark ({ time, clockForDay, markedClockUser }) {
   return (
     <div
       key={time}
-      className={`py-5 w-[380px] sm:w-[775px] text-xl border-x-2 flex justify-center hover:bg-slate-200 ${clicked ? "bg-slate-200" : ""} `}
+      className={`py-5 w-[410px] sm:w-[775px] text-xl border-x-2 flex justify-center hover:bg-slate-200 ${clicked ? "bg-slate-200" : ""} `}
       onClick={handleClick} 
     >
       {time} 
       {
         localForUserMarked.locationName && (
-          <p>&nbsp; - {localForUserMarked.locationName}</p>
+          <p className="text-sm">&nbsp; - {localForUserMarked.locationName}</p>
         )
       }
       {
         markedClockUser && (
-          <p>&nbsp; - {markedClockUser.username}</p>
+          <p className="text-sm">&nbsp; - {markedClockUser.username}</p>
         )
       }
     </div>

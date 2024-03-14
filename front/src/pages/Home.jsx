@@ -112,9 +112,6 @@ export default function Home() {
       {showCalendar === "home" ? (
         <div>
           <div className="flex justify-center">
-            <SearchBar />
-          </div>
-          <div className="flex justify-center">
             <SelectSports
               selectedSport={selectedSport}
               handleSelectSports={handleSelectSports}

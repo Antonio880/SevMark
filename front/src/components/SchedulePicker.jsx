@@ -142,7 +142,7 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
 
   return (
     <div className="">
-      <div className="pl-3 w-full sm:pl-5">
+      <div className="flex justify-center w-full md:pl-3 lg:pl-6">
         {getNextSevenDays().map((day) => (
           <DayMark
             key={day.shortDay}
@@ -156,8 +156,8 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
       </div>
       {selectedDay && (
         <div>
-          <div className="py-2">
-            <div className="h-72 overflow-y-auto grid grid-cols-1 divide-y">
+          <div className="py-3">
+            <div className="h-[320px] overflow-y-auto grid grid-cols-1 divide-y">
                 {renderTimeSlots(
                   selectedDay,
                   selectedClock,
@@ -170,14 +170,14 @@ export default function SchedulePicker({ setShowDisplayMark, id, phone }){
           </div>
           <div className="flex justify-between items-center mx-3">
             <button
-              className="flex items-center text-lg ml-4 font-semibold leading-6 transition ease-in-out duration-300 hover:shadow-sm  delay-150 text-gray-900 hover:bg-slate-300 rounded-md p-3"
+              className="flex items-center sm:text-base md:text-lg ml-4 font-semibold leading-6 transition ease-in-out duration-300 hover:shadow-sm  delay-150 text-gray-900 hover:bg-slate-300 rounded-md p-3"
               onClick={() => setShowDisplayMark(false)}
             >
               Cancel
             </button>
             <button
               onClick={handleSaveDayHour}
-              className="flex justify-center rounded-md p-3 text-lg text-black font-semibold leading-6 transition ease-in-out delay-150 hover:text-white hover:bg-orange-400 duration-300 hover:shadow-sm"
+              className="flex justify-center rounded-md sm:text-base p-3 md:text-lg text-black font-semibold leading-6 transition ease-in-out delay-150 hover:text-white hover:bg-orange-400 duration-300 hover:shadow-sm"
             >
               Reservar
             </button>

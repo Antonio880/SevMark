@@ -56,16 +56,17 @@ class AvailableTimeController {
 
   static async updateAvailableTime(req, res) {
     try {
-      console.log(req.body.avaliableTimes);
-      await availableTime.deleteMany({ local_id: req.body.avaliableTimes[0].local_id });
+      console.log(req.body);
       
-      const availableTimesCreate = req.body.availableTimes.map(async (time) => {
-        const newAvailableTime = await availableTime.create({
+      const availableTimesCreate = req.body.map(async (time) => {
+        const newAvailableTime = await availableTime.findByIdAndUpdate( time.id, {
+          id: time.id,
           day: time.day,
           startTime: time.startTime,
           endTime: time.endTime,
           local_id: time.local_id
         });
+        console.log(newAvailableTime)
         return newAvailableTime;
       });
       

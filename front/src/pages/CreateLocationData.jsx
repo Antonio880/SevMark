@@ -20,7 +20,7 @@ export default function CreateLocationData() {
   const [selectedDay, setSelectedDay] = useState(null);
   const { locals, setLocals } = useLocalContext();
   const [price, setPrice] = useState(0);
-  const { user } = useUserContext();
+  const { user, setUser } = useUserContext();
   const [images, setImages] = useState([]);
   const [selectedSports, setSelectedSports] = useState([]);
   const [sportsOptions, setSportsOptions] = useState([]);
@@ -100,6 +100,15 @@ export default function CreateLocationData() {
           setGetNextSevenDays(response.data)
         });
     };
+
+    const fetchImagesForLocal = async () => {
+      await axios.get(
+        `http://localhost:3001/images/busca?local_id=${location.data.id}`
+      )
+        .then(response => {
+          setImages(response.data)
+        });
+    };
     if (location?.data) {
       setInputValue(new Intl.NumberFormat('pt-BR', {
         style: 'currency',
@@ -109,9 +118,14 @@ export default function CreateLocationData() {
       setSelectedSports(location.sports);
       setSportsBeforeLocal(location.sports);
       setTypeRequisition("put");
+      fetchImagesForLocal();
       fetchAvaliableTimesForLocal();
     }
   }, []);
+
+  // useEffect(() => {
+  //   console.log(selectedSports, sportsOptions);
+  // }, [selectedSports])
 
   const onSubmit = async (data) => {
     const numericPrice = Number(data.price.replace(/[^0-9]/g, ''));
@@ -137,24 +151,22 @@ export default function CreateLocationData() {
       if (response.status === 201) {
         const returnLocal = await axios.get(`http://localhost:3001/locals/busca?name=${dataWithUserId.locationName}&description=${dataWithUserId.description}`)
           .catch(err => console.error(err));
-        console.log("0")
         selectedSports.map(async (sportId) => {
-          const selectedSport = sportsOptions.find((sport) => sport.name == sportId.name);
-          console.log(selectedSport)
-          if (selectedSport) {
+          
+          if (sportId) {
             const dataSport = {
-              name: selectedSport.name,
+              name: sportId.name,
               local_id: returnLocal.data[0].id,
             };
             // Requisição para criar o esporte associado ao local
-            if(typeRequisition === 'post'){
+            if (typeRequisition === 'post') {
               await axios.post("http://localhost:3001/sports", dataSport);
             }
             else if (typeRequisition === 'put' && selectedSports !== sportsBeforeLocal) {
               await axios.delete(`http://localhost:3001/sports/busca?local_id=${returnLocal.data[0].id}`);
               await axios.post("http://localhost:3001/sports", dataSport);
             }
-            
+
           }
         });
         await Promise.all(images.map(async (image) => {
@@ -170,6 +182,7 @@ export default function CreateLocationData() {
           });
         }));
         const availableTimes = getNextSevenDays.map(day => ({
+          id: day.id,
           day: day.day,
           startTime: day.startTime,
           endTime: day.endTime,
@@ -180,14 +193,14 @@ export default function CreateLocationData() {
           await axios.post("http://localhost:3001/avaliableTimes", {
             availableTimes
           }).catch((e) => alert("Erro ao definir os Horários Disponíveis - " + e));
-        }else if(typeRequisition === "put"){
-          console.log("teste")
-          await axios.put("http://localhost:3001/avaliableTimes", {
+          setLocals([...locals, dataWithUserId]);
+        } else if (typeRequisition === "put") {
+          await axios.put("http://localhost:3001/avaliableTimes",
             availableTimes
-          }).catch((e) => alert("Erro ao atualizar os Horários Disponíveis - " + e));
+          )
+            .catch((e) => alert("Erro ao atualizar os Horários Disponíveis - " + e));
         }
 
-        setLocals([...locals, dataWithUserId]);
         navigate("/home");
       } else {
         alert("Sua criação foi inválida");
@@ -198,24 +211,21 @@ export default function CreateLocationData() {
     }
   };
 
-  useEffect(() => {
-    console.log(selectedSports, sportsBeforeLocal, typeRequisition)
-  }, [selectedSports, sportsBeforeLocal])
 
   const handleSelectSports = (event) => {
     const selectedSportId = event.target.value;
+    const selectedSport = sportsOptions.find((sport) => {
+      return sport.name === selectedSportId;
+    });
+    
+    console.log(selectedSport);
     if (!selectedSports.includes(selectedSportId)) {
       setSelectedSports([...selectedSports, selectedSportId]);
     }
   };
 
-  useEffect(() => {
-    console.log(images)
-  }, [images]);
-
   const handleRemoveSport = (sportId) => {
     const updatedSports = selectedSports.filter((sport) => sport !== sportId);
-    console.log(updatedSports, sportId)
     setSelectedSports(updatedSports);
 
   };
@@ -248,7 +258,16 @@ export default function CreateLocationData() {
   const handleSelectTimeStart = (time) => {
     if (selectedDay) {
       const updatedDays = getNextSevenDays.map((day) =>
-        day.name === selectedDay ? { ...day, timeStart: time } : day
+        day.day === selectedDay ? { ...day, startTime: time } : day
+      );
+      setGetNextSevenDays(updatedDays);
+    }
+  };
+
+  const handleSelectTimeEnd = (time) => {
+    if (selectedDay) {
+      const updatedDays = getNextSevenDays.map((day) =>
+        day.day === selectedDay ? { ...day, endTime: time } : day
       );
       setGetNextSevenDays(updatedDays);
     }
@@ -358,19 +377,19 @@ export default function CreateLocationData() {
                     >
                       <option defaultValue={""}>Choose a Sport</option>
                       {sportsOptions && sportsOptions.map((sport) => (
-                        <option key={sport.id} value={sport.id}>
+                        <option key={sport.id} value={sport.name}>
                           {sport.name}
                         </option>
                       ))}
                     </select>
                   </div>
-                  <div htmlFor="sports" className="flex items-center justify-center flex-wrap px-4 w-[400px] my-2 text-sm font-medium text-gray-900">
+                  <div htmlFor="sports" className="flex items-center justify-center flex-wrap px-4 w-full md:w-[400px] my-2 text-sm font-medium text-gray-900">
                     {selectedSports.length > 0 &&
                       selectedSports.map((sportId, index) => (
                         <div className="flex bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md mx-1 mb-2 px-2 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-60 duration-200 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" key={index}>
-                          {typeRequisition === "post" ? sportsOptions.find((sport) => sport.id == sportId)?.name : sportId?.name}
+                          {typeRequisition === "post" ? sportsOptions.find((sport) => sport.name === sportId)?.name : sportId?.name}
                           <div className="w-5 flex pl-2 items-center">
-                            <img src="xIcon.png" alt="fecha icone" onClick={() => { handleRemoveSport(sportId); console.log(sportId) }} />
+                            <img src="xIcon.png" alt="fecha icone" onClick={() => { handleRemoveSport(sportId); }} />
                           </div>
                         </div>
                       ))}
@@ -388,29 +407,29 @@ export default function CreateLocationData() {
                 </div>
               </div>
 
-              <div className="pl-[600px] flex flex-row justify-center md:w-[700px] col-span-full">
+              <div className="flex flex-col md:flex-row  md:w-full  col-span-full">
                 <div className="basis-1/2">
                   <label
                     for="about"
-                    className=" text-sm font-medium leading-6 text-gray-900"
+                    className=" text-sm font-medium leading-6 text-gray-900 pl-[9.5vw]"
                   >
-                    Obs
+                    Obs:
                   </label>
-                  <div className="mt-2 w-[250px]">
+                  <div className="mt-2 px-10 flex justify-center">
                     <textarea
                       id="about"
                       name="about"
                       rows="3"
-                      className="block w-full  rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="flex justify-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
                       {...register("obs")}
                       defaultValue={location?.data ? location.data.obs : ""}
                     ></textarea>
                   </div>
                 </div>
-                <div className="pl-16 flex basis-1/2">
-                  <div className="flex flex-col">
-                    <div className="flex">
-                      <label htmlFor="Available Times" className="flex items-center my-2 pr-3 text-sm font-medium text-gray-900">
+                <div className="lg:pl-16  basis-1/2">
+                  <div className="">
+                    <div className="flex flex-col md:flex-row">
+                      <label htmlFor="Available Times" className="flex items-center my-2 pl-[9.5vw] md:pr-3 text-sm font-medium text-gray-900">
                         Horários Disponíveis:
                       </label>
                       <div class="flex bg-white w-[380px] sm:w-[550px] shadow-md justify-start md:justify-center rounded-lg overflow-x-auto mx-auto h-16 py-3 px-2  ">
@@ -444,6 +463,7 @@ export default function CreateLocationData() {
                             <div className="flex">
                               <h3>Encerramento:</h3>
                               <select
+                                onChange={(e) => handleSelectTimeEnd(e.target.value)}
                               >
                                 {renderTimeSlots().map((data, index) => {
                                   if (getNextSevenDays.find(days => days.endTime === data && days.day === selectedDay)?.endTime) return <option key={index} value={data}>{data}</option>
@@ -469,6 +489,15 @@ export default function CreateLocationData() {
                 </label>
                 <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                   <div className="text-center">
+                    {
+                      location?.data && (
+                        images.map((image) => {
+                          <div className="w-[450px]">
+                            <img src={image.src.replace(/\\/g, '/')} alt="" />
+                          </div>
+                        })
+                      )
+                    }
                     <svg
                       className="mx-auto h-12 w-12 text-gray-300"
                       viewBox="0 0 24 24"
@@ -497,6 +526,7 @@ export default function CreateLocationData() {
                               setImages([...images, e.target.files[0]]);
                           }}
                         />
+
                       </label>
                     </div>
                     <p className="text-xs leading-5 text-gray-600">
@@ -508,7 +538,7 @@ export default function CreateLocationData() {
               </div>
             </div>
 
-            <div className="mt-6 mr-44 flex items-center justify-end gap-x-6">
+            <div className="mt-6 flex items-center justify-around sm:justify-end gap-x-6">
               <button
                 type="button"
                 className="text-sm font-semibold leading-6 text-gray-900"
