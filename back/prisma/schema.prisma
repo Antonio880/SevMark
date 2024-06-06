@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model avaliable_times {
+  id        Int    @id @default(autoincrement())
+  day       String @db.VarChar(8)
+  startTime String @db.VarChar(10)
+  endTime   String @db.VarChar(10)
+  local_id  Int
+  locals    locals @relation(fields: [local_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "avaliable_times_ibfk_1")
+
+  @@index([local_id], map: "local_id")
+}
+
+model images {
+  id       Int     @id @default(autoincrement())
+  name     String  @db.VarChar(80)
+  src      String  @db.VarChar(200)
+  local_id Int?
+  locals   locals? @relation(fields: [local_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_local_id")
+
+  @@index([local_id], map: "fk_local_id")
+}
+
+model locals {
+  id              Int               @id @default(autoincrement())
+  locationName    String            @db.VarChar(80)
+  price           Decimal           @db.Decimal(10, 2)
+  description     String?           @db.Text
+  obs             String?           @db.Text
+  usuario_id      Int
+  avaliable_times avaliable_times[]
+  images          images[]
+  users           Users             @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locals_ibfk_1")
+  marks           marks[]
+  sports          sports[]
+
+  @@index([usuario_id], map: "usuario_id")
+}
+
+model marks {
+  id         Int    @id @default(autoincrement())
+  dayOfMonth Int
+  monthYear  String @db.VarChar(10)
+  shortDay   String @db.VarChar(8)
+  hour       String @db.VarChar(20)
+  local_id   Int
+  usuario_id Int
+  locals     locals @relation(fields: [local_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "marks_ibfk_1")
+  users      Users  @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "marks_ibfk_2")
+
+  @@index([local_id], map: "local_id")
+  @@index([usuario_id], map: "usuario_id")
+}
+
+model sports {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(255)
+  local_id Int
+  locals   locals @relation(fields: [local_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sports_ibfk_1")
+
+  @@index([local_id], map: "local_id")
+}
+
+model Users {
+  id       Int            @id @default(autoincrement())
+  username String         @db.VarChar(80)
+  email    String         @db.VarChar(100)
+  password String         @db.VarChar(80)
+  typeUser users_typeUser
+  phone    String?        @db.VarChar(40)
+  locals   locals[]
+  marks    marks[]
+}
+
+enum users_typeUser {
+  cliente
+  dono
+}

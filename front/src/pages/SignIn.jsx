@@ -9,11 +9,11 @@ import ButtonSign from "../components/ButtonSign";
 export default function SignIn() {
 
   const {
-      register,
-      handleSubmit,
-      watch,
-      formState: { errors },
-    } = useForm();
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
   const { user, setUser } = useUserContext();
   const navigate = useNavigate();
 
@@ -24,20 +24,23 @@ export default function SignIn() {
       email: email,
       password: password,
     };
-    
-    try{
-      const response = await axios.post("http://localhost:3001/user", data)
-        .catch(() => alert("Usuário não Existente"));
-      
-      if(response.status === 200){
-        setUser(response.data.user);
-        const userString = JSON.stringify(response.data.user);
-        document.cookie = `user=${encodeURIComponent(userString)};  path=/`;
-        navigate("/home");
-      }else if(response.status == 400){
-        alert("Usuário e/ou senha incorretos");
-      }
-    }catch(e){
+
+    try {
+      await axios.post("http://localhost:3001/user", data)
+        .then((response) => {
+          console.log(response);
+          if (response.status === 200) {
+            setUser(response.data.user);
+            const userString = JSON.stringify(response.data.user);
+            document.cookie = `user=${encodeURIComponent(userString)};  path=/`;
+            navigate("/home");
+          } else if (response.status == 400) {
+            alert("Usuário e/ou senha incorretos");
+          }
+        })
+        .catch((e) => {alert("Usuário não Existente"); console.log(e.response.data)});
+
+    } catch (e) {
       console.error(e + "teste");
     }
   };

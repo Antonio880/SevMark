@@ -1,23 +1,32 @@
-import { sport } from "../models/sport.js";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 class SportController {
   static async listSports(req, res) {
     let json = { result: [] };
 
-    let sports = await sport.find();
+    try {
+      let sports = await prisma.sports.findMany();
 
-    for (let i in sports) {
-      json.result.push({
-        id: sports[i].id,
-        name: sports[i].name
-      });
+      for (let i in sports) {
+        json.result.push({
+          id: sports[i].id,
+          name: sports[i].name
+        });
+      }
+
+      res.json(json);
+    } catch (error) {
+      res.status(500).json({ message: `Error fetching sports: ${error.message}` });
     }
-
-    res.json(json);
   }
+
   static async createSport(req, res) {
     try {
-      const newSport = await sport.create(req.body);
+      const newSport = await prisma.sports.create({
+        data: req.body
+      });
       res.status(201).json({ message: 'Created successfully', sport: newSport });
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Failed to create a new Sport` });
@@ -26,8 +35,10 @@ class SportController {
 
   static async findSportByLocalId(req, res) {
     try {
-      const local_id = req.query.id;
-      const sports = await sport.findOne({ local_id });
+      const local_id = parseInt(req.query.id);
+      const sports = await prisma.sports.findMany({
+        where: { localId: local_id }
+      });
 
       if (sports.length > 0) {
         res.status(200).json(sports);
@@ -41,9 +52,12 @@ class SportController {
 
   static async updateSport(req, res) {
     try {
-      const id = req.params.id;
-      const sportUpdated = await sport.findByIdAndUpdate(id, req.body);
-      res.status(200).json({ message: "Local updated", sport: sportUpdated });
+      const id = parseInt(req.params.id);
+      const sportUpdated = await prisma.sports.update({
+        where: { id: id },
+        data: req.body
+      });
+      res.status(200).json({ message: "Sport updated", sport: sportUpdated });
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Update failed` });
     }
@@ -51,16 +65,20 @@ class SportController {
 
   static async deleteSportByLocalId(req, res) {
     try {
-      const local_id = req.query.local_id;
-      const sportFound = await sport.findOne({ local_id });
-      if (sportFound) {
-        await sport.deleteMany({ local_id });
-        res.status(200).json({ message: "Sport delete with sucess" });
+      const local_id = parseInt(req.query.local_id);
+      const sportFound = await prisma.sports.findMany({
+        where: { localId: local_id }
+      });
+      if (sportFound.length > 0) {
+        await prisma.sport.deleteMany({
+          where: { localId: local_id }
+        });
+        res.status(200).json({ message: "Sport deleted successfully" });
       } else {
         res.status(404).json({ message: 'Sport not found' });
       }
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to retrieve Sport` });
+      res.status(500).json({ message: `${error.message} - Failed to delete Sport` });
     }
   }
 }

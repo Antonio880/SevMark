@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../Context/ContextUser";
 import { useLocalContext } from "../Context/ContextLocation";
-import axios, { Axios } from "axios";
+import axios from "axios";
 import ChangeDay from "../components/ChangeDay";
 import moment from "moment";
 

@@ -1,9 +1,11 @@
-import { availableTime } from "../models/avaliableTimes.js";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 class AvailableTimeController {
   static async listAvailableTimes(req, res) {
     try {
-      const availableTimes = await availableTime.find();
+      const availableTimes = await prisma.avaliable_times.findMany();
       res.json(availableTimes);
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Failed to retrieve available times` });
@@ -13,8 +15,14 @@ class AvailableTimeController {
   static async findAvailableTimeById(req, res) {
     try {
       const id = req.params.id;
-      const availableTimeFound = await availableTime.findById(id);
-      res.status(200).json(availableTimeFound);
+      const availableTimeFound = await prisma.avaliable_times.findMany({
+        where: { id },
+      });
+      if (availableTimeFound) {
+        res.status(200).json(availableTimeFound);
+      } else {
+        res.status(404).json({ message: 'Available Time not found' });
+      }
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Failed to retrieve available time` });
     }
@@ -22,31 +30,34 @@ class AvailableTimeController {
 
   static async findAvaliableTimeByLocalId(req, res) {
     try {
-      const  id  = req.query.localId;
-      const avaliableTimeFound = await availableTime.findOne({ local_id : id });
-  
+      const id = req.query.localId;
+      const avaliableTimeFound = await prisma.avaliable_times.findMany({
+        where: { localId: localId },
+      });
+
       if (avaliableTimeFound) {
         res.status(200).json(avaliableTimeFound);
       } else {
-        res.status(404).json({ message: 'Avaliable Time not found' });
+        res.status(404).json({ message: 'Available Time not found' });
       }
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to retrieve Avaliable Time` });
+      res.status(500).json({ message: `${error.message} - Failed to retrieve Available Time` });
     }
   }
 
   static async createAvailableTimes(req, res) {
     try {
-      
-      const availableTimes = req.body.availableTimes.map(async (time) => {
-        const newAvailableTime = await availableTime.create({
-          day: time.day,
-          startTime: time.startTime,
-          endTime: time.endTime,
-          local_id: time.local_id
+      const availableTimes = await Promise.all(req.body.availableTimes.map(async (time) => {
+        const newAvailableTime = await prisma.avaliable_times.create({
+          data:{
+            day: time.day,
+            startTime: time.startTime,
+            endTime: time.endTime,
+            local_id: parseInt(time.local_id)
+          }
         });
         return newAvailableTime;
-      });
+      }));
       res.status(201).json({ message: 'Created successfully', availableTimes });
     } catch (error) {
       console.error(error);
@@ -56,20 +67,21 @@ class AvailableTimeController {
 
   static async updateAvailableTime(req, res) {
     try {
-      console.log(req.body);
-      
-      const availableTimesCreate = req.body.map(async (time) => {
-        const newAvailableTime = await availableTime.findByIdAndUpdate( time.id, {
-          id: time.id,
-          day: time.day,
-          startTime: time.startTime,
-          endTime: time.endTime,
-          local_id: time.local_id
+      const availableTimesCreate = await Promise.all(req.body.map(async (time) => {
+        await prisma.avaliable_times.update({
+          where:{
+            id: time.id
+          },
+          data:{
+            day: time.day,
+            startTime: time.startTime,
+            endTime: time.endTime,
+            local_id: time.local_id
+          }
         });
-        console.log(newAvailableTime)
-        return newAvailableTime;
-      });
-      
+        
+      }));
+
       res.status(200).json({ message: 'Updated successfully', availableTimesCreate });
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Failed to update available time` });
@@ -79,7 +91,9 @@ class AvailableTimeController {
   static async deleteAvailableTime(req, res) {
     try {
       const id = req.params.id;
-      await availableTime.findByIdAndDelete(id);
+      await prisma.avaliable_times.delete({
+        where: { id: parseInt(id) },
+      });
       res.status(200).json({ message: 'Deleted successfully' });
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Failed to delete available time` });

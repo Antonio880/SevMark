@@ -1,6 +1,6 @@
-// Importe o modelo "mark"
-import { mark } from "../models/mark.js";
-import { user } from "../models/user.js"
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 class MarkController {
   static async listMarks(req, res) {
@@ -8,7 +8,7 @@ class MarkController {
       let json = { result: [] };
 
       // Obtenha os dados de marcas
-      let markList = await mark.find();
+      let markList = await prisma.marks.findMany();
 
       // Mapeie os dados para o formato desejado na resposta JSON
       markList.forEach(data => {
@@ -18,7 +18,7 @@ class MarkController {
           monthYear: data.monthYear,
           shortDay: data.shortDay,
           hour: data.hour,
-          local_id: data.local_id
+          local_id: data.localId
           // Inclua outros campos conforme necessário
         });
       });
@@ -31,9 +31,15 @@ class MarkController {
 
   static async findMarkById(req, res) {
     try {
-      const id = req.params.id;
-      const markFound = await mark.findById(id);
-      res.status(200).json(markFound);
+      const id = parseInt(req.params.id);
+      const markFound = await prisma.marks.findUnique({
+        where: { id: id },
+      });
+      if (markFound) {
+        res.status(200).json(markFound);
+      } else {
+        res.status(404).json({ message: 'Mark not found' });
+      }
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Failed to retrieve mark` });
     }
@@ -41,9 +47,11 @@ class MarkController {
 
   static async findMarkByLocalID(req, res) {
     try {
-      const local_id = req.query.localId;
-      const markFound = await mark.findOne({ local_id });
-      if (markFound) {
+      const local_id = parseInt(req.query.localId);
+      const markFound = await prisma.marks.findMany({
+        where: { localId: local_id },
+      });
+      if (markFound.length > 0) {
         res.status(200).json(markFound);
       } else {
         res.status(404).json({ message: 'Mark not found' });
@@ -55,11 +63,17 @@ class MarkController {
 
   static async findMarkByLocalIDAndUserId(req, res) {
     try {
-      const local_id = req.query.local_id;
-      const markFound = await mark.semNome({ local_id });
+      const local_id = parseInt(req.query.local_id);
+      const user_id = parseInt(req.query.user_id);
+      const markFound = await prisma.marks.findMany({
+        where: {
+          localId: local_id,
+          userId: user_id,
+        },
+      });
       
-      if (markFound) {
-        res.status(200).json({ markFound });
+      if (markFound.length > 0) {
+        res.status(200).json(markFound);
       } else {
         res.status(404).json({ message: 'Mark or User not found' });
       }
@@ -70,10 +84,12 @@ class MarkController {
 
   static async findMarkByUserId(req, res) {
     try {
-      const usuario_id = req.query.userId;
-      const userFound = await mark.findOne({ usuario_id: usuario_id });
-      if (userFound) {
-        res.status(200).json(userFound);
+      const user_id = parseInt(req.query.userId);
+      const markFound = await prisma.marks.findMany({
+        where: { userId: user_id },
+      });
+      if (markFound.length > 0) {
+        res.status(200).json(markFound);
       } else {
         res.status(404).json({ message: 'Mark not found' });
       }
@@ -84,18 +100,25 @@ class MarkController {
 
   static async createMark(req, res) {
     try {
-      const { dayOfMonth, hour, local_id, monthYear } = req.body;
-      // Verifique se o usuário com o mesmo e-mail já existe
-      const marksExisting = await mark.find({ local_id });
+      const { dayOfMonth, hour, localId, monthYear, userId } = req.body;
+      // Verifique se já existe uma marcação para o mesmo dia e hora
+      const existingMark = await prisma.marks.findFirst({
+        where: {
+          dayOfMonth: dayOfMonth,
+          hour: hour,
+          monthYear: monthYear,
+          localId: localId,
+          userId: userId,
+        },
+      });
 
-      // Verificar se já existe uma marcação para o mesmo dia e hora
-      const isMarked = marksExisting.some(mark => mark.dayOfMonth === dayOfMonth && mark.hour === hour && mark.monthYear === monthYear);
-  
-      if (isMarked) {
+      if (existingMark) {
         return res.status(409).json({ message: "Mark already exists" });
       }
     
-      const newMark = await mark.create(req.body);
+      const newMark = await prisma.mark.create({
+        data: req.body,
+      });
       res.status(201).json({ message: 'Created successfully', mark: newMark });
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Failed to create mark` });

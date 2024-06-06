@@ -1,9 +1,6 @@
-// Importe o modelo "local"
-import { local } from "../models/locationData.js";
-import { sport } from "../models/sport.js";
-import { mark } from "../models/mark.js";
-import { availableTime } from "../models/avaliableTimes.js";
-import { image } from "../models/images.js" 
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 class LocationDataController {
   static async listLocationData(req, res) {
@@ -11,7 +8,7 @@ class LocationDataController {
       let json = { result: [] };
 
       // Obtenha os dados de localização
-      let locationDataList = await local.find();
+      let locationDataList = await prisma.locals.findMany();
 
       // Mapeie os dados para o formato desejado na resposta JSON
       locationDataList.forEach(data => {
@@ -33,9 +30,15 @@ class LocationDataController {
 
   static async findLocationDataById(req, res) {
     try {
-      const id = req.params.id;
-      const locationDataFound = await local.findById(id);
-      res.status(200).json(locationDataFound);
+      const id = parseInt(req.params.id);
+      const locationDataFound = await prisma.locals.findUnique({
+        where: { id: id },
+      });
+      if (locationDataFound) {
+        res.status(200).json(locationDataFound);
+      } else {
+        res.status(404).json({ message: 'Location data not found' });
+      }
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Failed to retrieve location data` });
     }
@@ -43,34 +46,25 @@ class LocationDataController {
 
   static async createLocationData(req, res) {
     try {
-      // Verificar se o local já existe com base em algum critério (por exemplo, nome do local)
-      /* const existingLocation = await local.findOne({
-        where: {
-          // Adapte isso para o critério que você deseja usar (por exemplo, nome)
-          name: req.body.name,
-        },
+      const newLocationData = await prisma.locals.create({
+        data: req.body,
       });
-  
-      if (existingLocation) {
-        // Se o local já existir, retorne uma resposta indicando que o local já está cadastrado
-        return res.status(400).json({ message: 'Location already exists' });
-      } */
-  
-      // Se o local não existir, proceda com a criação
-      const newLocationData = await local.create(req.body);
       return res.status(201).json({ message: 'Created successfully', local: newLocationData });
     } catch (error) {
-      // Tratar erros durante o processo
-      console.error(error);
-      return res.status(500).json({ message: 'Failed to create location data', error });
+      return res.status(500).json({ message: `Failed to create location data: ${error.message}` });
     }
   }
 
   static async findLocationByName(req, res) {
     try {
       const { name, description } = req.query;
-      const locationDataFound = await local.findOne({ locationName: name, description });
-      
+      const locationDataFound = await prisma.locals.findFirst({
+        where: {
+          locationName: name,
+          description: description,
+        },
+      });
+
       if (locationDataFound) {
         res.status(200).json(locationDataFound);
       } else {
@@ -83,10 +77,12 @@ class LocationDataController {
 
   static async findLocationByUserId(req, res) {
     try {
-      const usuario_id = req.query.usuario_id;
-      const locationDataFound = await local.findOne({ usuario_id });
-      
-      if (locationDataFound) {
+      const usuario_id = parseInt(req.query.usuario_id);
+      const locationDataFound = await prisma.locals.findMany({
+        where: { usuario_id: usuario_id },
+      });
+
+      if (locationDataFound.length > 0) {
         res.status(200).json(locationDataFound);
       } else {
         res.status(404).json({ message: 'Local not found' });
@@ -100,16 +96,15 @@ class LocationDataController {
     try {
       const sportName = req.query.name;
 
-      // Consulta SQL para obter locais associados a um esporte específico
-      const query = `
-      SELECT locals.*
-      FROM locals
-      INNER JOIN sports ON locals.id = sports.local_id
-      WHERE sports.name = ?;
-      
-      `;
-
-      const locations = await sport.query(query, [sportName]);
+      const locations = await prisma.locals.findMany({
+        where: {
+          sports: {
+            some: {
+              name: sportName,
+            },
+          },
+        },
+      });
 
       res.status(200).json(locations);
     } catch (error) {
@@ -119,9 +114,12 @@ class LocationDataController {
 
   static async updateLocal(req, res) {
     try {
-      const id = req.params.id;
-      const localUpdated = await local.findByIdAndUpdate(id, req.body);
-      res.status(201).json({ message: "Local updated", local: localUpdated });
+      const id = parseInt(req.params.id);
+      const localUpdated = await prisma.locals.update({
+        where: { id: id },
+        data: req.body,
+      });
+      res.status(200).json({ message: "Local updated", local: localUpdated });
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Update failed` });
     }
@@ -129,39 +127,32 @@ class LocationDataController {
 
   static async deleteLocationData(req, res) {
     try {
-      const id = req.params.id;
-  
-      const localFound = await local.findById(id);
+      const id = parseInt(req.params.id);
+
+      const localFound = await prisma.locals.findUnique({
+        where: { id: id },
+      });
       if (!localFound) {
         return res.status(404).json({ message: "Local not found" });
       }
 
-      const markFound = await mark.findOne({ local_id: id });
-      const sportFound = await sport.findOne({ local_id: id });
-      const avaliableTimeFound = await availableTime.findOne({ local_id: id });
-      const imageFound = await image.findOne({ local_id: id });
-  
-      // Efficiently collect all deletion promises using Promise.all
-      const deletionPromises = [];
-      if (markFound) {
-        deletionPromises.push(mark.deleteMany({ local_id: id }));
-      }
-      if (sportFound) {
-        deletionPromises.push(sport.deleteMany({ local_id: id }));
-      }
-      if (avaliableTimeFound) {
-        deletionPromises.push(availableTime.deleteMany({ local_id: id }));
-      }
-      if(imageFound){
-        deletionPromises.push(image.deleteMany({ local_id: id }));
-      }
-  
-      // Ensure all deletions complete before proceeding
-      await Promise.all(deletionPromises);
-  
-      // Delete the local record after all child deletions
-      await local.findByIdAndDelete(id);
-  
+      await prisma.marks.deleteMany({
+        where: { localId: id },
+      });
+      await prisma.sports.deleteMany({
+        where: { localId: id },
+      });
+      await prisma.avaliable_times.deleteMany({
+        where: { localId: id },
+      });
+      await prisma.images.deleteMany({
+        where: { localId: id },
+      });
+
+      await prisma.locals.delete({
+        where: { id: id },
+      });
+
       res.status(200).json({ message: "Local successfully deleted" });
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Deletion failed` });
@@ -169,7 +160,6 @@ class LocationDataController {
   }
 
   // Métodos adicionais conforme necessário
-
 }
 
 export default LocationDataController;
