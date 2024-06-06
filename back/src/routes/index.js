@@ -5,12 +5,14 @@ import sports from "./sportRoutes.js";
 import marks from "./markRoutes.js";
 import images from "./imageRoutes.js";
 import avaliableTimes from "./avaliableTimeRoutes.js"
+import checkToken from "../models/auth.js"
+import UserController from "../controllers/userController.js";
 
 const routes = ( app ) => {
 
-    app.route("/").get((req, res) => res.status(200).send("Teste Curso"));
+    app.use(checkToken);
 
-    app.use(express.json(), users, images, locals, sports, marks, avaliableTimes);
+    app.use(users, images, locals, sports, marks, avaliableTimes);
 };
 
 export default routes;

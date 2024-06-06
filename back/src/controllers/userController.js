@@ -1,4 +1,7 @@
 import { PrismaClient } from '@prisma/client';
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+
 
 const prisma = new PrismaClient();
 
@@ -8,7 +11,7 @@ class UserController {
 
     try {
       let users = await prisma.users.findMany();
-      
+
       for (let i in users) {
         json.result.push({
           id: users[i].id,
@@ -54,9 +57,11 @@ class UserController {
       if (existingUser) {
         return res.status(409).json({ message: "User already exists" });
       }
+      const salt = await bcrypt.genSalt(12);
+      req.body.password = await bcrypt.hash(req.body.password, salt);
       // Se o usuário não existir, crie um novo usuário
       const newUser = await prisma.users.create({
-        data: req.body,
+        data: req.body
       });
       res.status(201).json({ message: 'Created successfully', user: newUser });
     } catch (error) {
@@ -77,23 +82,6 @@ class UserController {
   //   }
   // }
 
-  /* static async findUserByLocalId(req, res) {
-    try {
-      const { usuario_id } = req.query;
-      const userFound = await prisma.user.findFirst({
-        where: { usuario_id: usuario_id },
-      });
-
-      if (userFound) {
-        res.status(200).json(userFound);
-      } else {
-        res.status(404).json({ message: 'User not found' });
-      }
-    } catch (error) {
-      res.status(500).json({ message: `Failed to find user: ${error.message}` });
-    }
-  } */
-
   // static async deleteUser(req, res) {
   //   try {
   //     const id = parseInt(req.params.id);
@@ -105,20 +93,43 @@ class UserController {
   //     res.status(500).json({ message: `Deletion failed: ${error.message}` });
   //   }
   // }
-
+  
   static async getUser(req, res) {
     try {
       const { email, password } = req.body;
+      console.log('Email:', email);
+      console.log('Password:', password);
+  
       const existingUser = await prisma.users.findFirst({
         where: {
-          email: email,
-          password: password,
+          email: email
         },
       });
-      if (existingUser) {
-        return res.status(200).json({ message: 'Success in requisition', user: existingUser });
+  
+      if (!existingUser) {
+        return res.status(404).json({ message: 'User not found' });
       }
-      return res.status(400).json({ message: "Email and/or password incorrect" });
+  
+      console.log('Existing User:', existingUser);
+  
+      if (!existingUser.password) {
+        return res.status(500).json({ message: 'User password is missing in the database' });
+      }
+  
+      console.log('Password Provided:', password);
+      console.log('Stored Hashed Password:', existingUser.password);
+  
+      const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+      console.log('Is Password Valid:', isPasswordValid);
+  
+      if (!isPasswordValid) {
+        return res.status(422).json({ message: 'Passwords do not match' });
+      }
+  
+      const secret = process.env.SECRET;
+      const token = jwt.sign({ user: existingUser.id }, secret, { expiresIn: 86400 });
+      res.status(200).json({ message: 'User logged in', token });
+  
     } catch (error) {
       res.status(500).json({ message: `Error retrieving user: ${error.message}` });
     }

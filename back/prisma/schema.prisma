@@ -71,7 +71,7 @@ model sports {
 model Users {
   id       Int            @id @default(autoincrement())
   username String         @db.VarChar(80)
-  email    String         @db.VarChar(100)
+  email    String         @db.VarChar(100) @unique
   password String         @db.VarChar(80)
   typeUser users_typeUser
   phone    String?        @db.VarChar(40)
