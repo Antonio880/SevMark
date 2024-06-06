@@ -20,7 +20,7 @@ export default function MarkedCalendarClient({}) {
           let userLocal = {};
           try {
             await axios.get(`http://localhost:3001/locals/usuario_id?usuario_id=${user.id}`)
-              .then(response => userLocal = response.data[0])
+              .then(response => {userLocal = response.data[0]; console.log(userLocal)})
               .catch(e => console.error(e));
             await axios.get(`http://localhost:3001/marks/buscaLocalIdBasedInUserId?local_id=${userLocal.id}`)
               .then(response => setLocalForUserMarked(response.data.markFound))
@@ -30,14 +30,9 @@ export default function MarkedCalendarClient({}) {
             console.error(error);
           }
         };
-        console.log
         fetchLocalByUser();
       }
     }, []);
-  
-    useEffect(() => {
-      console.log(localForUserMarked);
-    }, [localForUserMarked]);
 
     const getNextSevenDays = () => {
         const days = [];

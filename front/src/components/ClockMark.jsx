@@ -17,10 +17,6 @@ const ClockMark = ({ time, setSelectedClock, selectedClock, selectedClockDay }) 
     }
   };
 
-  useEffect(() => {
-    console.log(selectedClock);
-  }, [selectedClock])
-
   return (
     <div
       key={time}

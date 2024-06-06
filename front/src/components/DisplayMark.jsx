@@ -4,11 +4,11 @@ import SchedulePicker from "./SchedulePicker";
 import axios from "axios";
 import { useState, useEffect } from "react";
 export default function DisplayMark({ data, images, setShowDisplayMark }) {
-  const { obs, id, usuario_id } = data;
+  const { obs, id, user_id } = data;
   const [ phone, setPhone ] = useState("");
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/users/${usuario_id}`)
+    axios.get(`http://localhost:3001/users/${user_id}`)
       .then(response => setPhone(response.data.phone))
       .catch((err) => console.log("Não conseguimos pegar o número do dono"))
   }, []);

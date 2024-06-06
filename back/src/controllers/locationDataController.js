@@ -79,7 +79,7 @@ class LocationDataController {
     try {
       const usuario_id = parseInt(req.query.usuario_id);
       const locationDataFound = await prisma.locals.findMany({
-        where: { user_id: usuario_id },
+        where: { usuario_id: usuario_id },
       });
 
       if (locationDataFound.length > 0) {

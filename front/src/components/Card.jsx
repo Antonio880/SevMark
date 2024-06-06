@@ -6,7 +6,7 @@ import { useUserContext } from "../Context/ContextUser";
 import { Link } from "react-router-dom";
 
 export default function Card({ data, onRemove }) {
-  const { locationName, description, price, id, usuario_id } = data;
+  const { locationName, description, price, id, user_id } = data;
   const { user } = useUserContext();
   const [sports, setSports] = useState([]);
   const [showDisplayMark, setShowDisplayMark] = useState(false);
@@ -45,12 +45,12 @@ export default function Card({ data, onRemove }) {
   return (
     <div  >
       <div
-        className={`relative mt-5 rounded-md h-[90px] sm:h-[95px] md:h-[150px] w-[390px] sm:w-[640px] md:w-[800px] lg:w-[1000px] flex shadow-md bg-slate-100 leading-6 transition ease-in-out cursor-pointer delay-150 sm:hover:-translate-y-1  sm:hover:scale-70 sm:hover:bg-slate-200 ${user.id === usuario_id && "animate-fade"} duration-200 focus-visible:outline focus-visible:outline-2`}
+        className={`relative mt-5 rounded-md h-[90px] sm:h-[95px] md:h-[150px] w-[390px] sm:w-[640px] md:w-[800px] lg:w-[1000px] flex shadow-md bg-slate-100 leading-6 transition ease-in-out cursor-pointer delay-150 sm:hover:-translate-y-1  sm:hover:scale-70 sm:hover:bg-slate-200 ${user.id === user_id && "animate-fade"} duration-200 focus-visible:outline focus-visible:outline-2`}
         onClick={() => {
           setShowDisplayMark(!showDisplayMark);
         }}
-        onMouseOver={() => user.id === usuario_id && setShowButton(true)}
-        onMouseOut={() => user.id === usuario_id && setShowButton(false)}
+        onMouseOver={() => user.id === user_id && setShowButton(true)}
+        onMouseOut={() => user.id === user_id && setShowButton(false)}
       >
         <>
 

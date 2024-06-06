@@ -1,5 +1,6 @@
 import axios from "axios";
 import Card from "./Card"
+import { useEffect } from "react";
 export default function ListCard({ locationData, setLocals }){
 
     const handleRemoveLocal = async (idLocalToRemove) => {
@@ -8,6 +9,10 @@ export default function ListCard({ locationData, setLocals }){
         const updatedList = locationData.filter(local => local.id !== idLocalToRemove);
         setLocals(updatedList);
       };
+
+    useEffect(() => {
+        console.log(locationData);
+    }, [])
     
     return(
         <div className="overflow-y-auto pb-20">

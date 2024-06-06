@@ -30,11 +30,11 @@ class AvailableTimeController {
 
   static async findAvaliableTimeByLocalId(req, res) {
     try {
-      const id = req.query.localId;
+      const id = parseInt(req.query.localId);
       const avaliableTimeFound = await prisma.avaliable_times.findMany({
         where: { local_id: id },
       });
-
+      
       if (avaliableTimeFound) {
         res.status(200).json(avaliableTimeFound);
       } else {

@@ -64,11 +64,12 @@ class MarkController {
   static async findMarkByLocalIDAndUserId(req, res) {
     try {
       const local_id = parseInt(req.query.local_id);
-      const user_id = parseInt(req.query.user_id);
+      const user_id = req.query.user_id;
+      
       const markFound = await prisma.marks.findMany({
         where: {
           local_id: local_id,
-          user_id: user_id,
+          usuario_id: user_id,
         },
       });
       
@@ -86,7 +87,7 @@ class MarkController {
     try {
       const user_id = parseInt(req.query.userId);
       const markFound = await prisma.marks.findMany({
-        where: { user_id },
+        where: { usuario_id: user_id },
       });
       if (markFound.length > 0) {
         res.status(200).json(markFound);
