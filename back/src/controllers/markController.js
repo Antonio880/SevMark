@@ -18,7 +18,7 @@ class MarkController {
           monthYear: data.monthYear,
           shortDay: data.shortDay,
           hour: data.hour,
-          local_id: data.localId
+          local_id: data.local_id
           // Inclua outros campos conforme necessário
         });
       });
@@ -49,7 +49,7 @@ class MarkController {
     try {
       const local_id = parseInt(req.query.localId);
       const markFound = await prisma.marks.findMany({
-        where: { localId: local_id },
+        where: { local_id: local_id },
       });
       if (markFound.length > 0) {
         res.status(200).json(markFound);
@@ -67,8 +67,8 @@ class MarkController {
       const user_id = parseInt(req.query.user_id);
       const markFound = await prisma.marks.findMany({
         where: {
-          localId: local_id,
-          userId: user_id,
+          local_id: local_id,
+          user_id: user_id,
         },
       });
       
@@ -86,7 +86,7 @@ class MarkController {
     try {
       const user_id = parseInt(req.query.userId);
       const markFound = await prisma.marks.findMany({
-        where: { userId: user_id },
+        where: { user_id },
       });
       if (markFound.length > 0) {
         res.status(200).json(markFound);
@@ -107,8 +107,8 @@ class MarkController {
           dayOfMonth: dayOfMonth,
           hour: hour,
           monthYear: monthYear,
-          localId: localId,
-          userId: userId,
+          local_id: localId,
+          user_id: userId,
         },
       });
 
@@ -116,7 +116,7 @@ class MarkController {
         return res.status(409).json({ message: "Mark already exists" });
       }
     
-      const newMark = await prisma.mark.create({
+      const newMark = await prisma.marks.create({
         data: req.body,
       });
       res.status(201).json({ message: 'Created successfully', mark: newMark });

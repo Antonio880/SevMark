@@ -32,7 +32,7 @@ class AvailableTimeController {
     try {
       const id = req.query.localId;
       const avaliableTimeFound = await prisma.avaliable_times.findMany({
-        where: { localId: localId },
+        where: { local_id: id },
       });
 
       if (avaliableTimeFound) {

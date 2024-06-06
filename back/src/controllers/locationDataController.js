@@ -18,7 +18,7 @@ class LocationDataController {
           price: data.price,
           description: data.description,
           obs: data.obs,
-          usuario_id: data.usuario_id
+          user_id: data.usuario_id
         });
       });
 
@@ -79,7 +79,7 @@ class LocationDataController {
     try {
       const usuario_id = parseInt(req.query.usuario_id);
       const locationDataFound = await prisma.locals.findMany({
-        where: { usuario_id: usuario_id },
+        where: { user_id: usuario_id },
       });
 
       if (locationDataFound.length > 0) {
@@ -137,16 +137,16 @@ class LocationDataController {
       }
 
       await prisma.marks.deleteMany({
-        where: { localId: id },
+        where: { local_id: id },
       });
       await prisma.sports.deleteMany({
-        where: { localId: id },
+        where: { local_id: id },
       });
       await prisma.avaliable_times.deleteMany({
-        where: { localId: id },
+        where: { local_id: id },
       });
       await prisma.images.deleteMany({
-        where: { localId: id },
+        where: { local_id: id },
       });
 
       await prisma.locals.delete({

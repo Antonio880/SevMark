@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 class ImageController {
   static async listImages(req, res) {
     try {
-      const pictures = await prisma.image.findMany();
+      const pictures = await prisma.images.findMany();
       res.json(pictures);
     } catch (err) {
       res.status(500).json({ message: "Erro ao buscar as imagens." });
@@ -23,7 +23,7 @@ class ImageController {
         data: {
           name,
           src: file.path,
-          localId: parseInt(req.body.localId),
+          local_id: parseInt(req.body.localId),
         },
       });
       res.status(201).json(picture);
@@ -36,7 +36,7 @@ class ImageController {
     try {
       const localId = parseInt(req.query.local_id);
       const imagesFound = await prisma.images.findMany({
-        where: { localId: localId },
+        where: { local_id: localId },
       });
 
       if (imagesFound.length > 0) {

@@ -37,9 +37,9 @@ class SportController {
     try {
       const local_id = parseInt(req.query.id);
       const sports = await prisma.sports.findMany({
-        where: { localId: local_id }
+        where: { local_id: local_id }
       });
-
+      
       if (sports.length > 0) {
         res.status(200).json(sports);
       } else {
@@ -67,10 +67,10 @@ class SportController {
     try {
       const local_id = parseInt(req.query.local_id);
       const sportFound = await prisma.sports.findMany({
-        where: { localId: local_id }
+        where: { local_id: local_id }
       });
       if (sportFound.length > 0) {
-        await prisma.sport.deleteMany({
+        await prisma.sports.deleteMany({
           where: { localId: local_id }
         });
         res.status(200).json({ message: "Sport deleted successfully" });

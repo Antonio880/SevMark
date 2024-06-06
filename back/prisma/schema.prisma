@@ -34,14 +34,14 @@ model locals {
   price           Decimal           @db.Decimal(10, 2)
   description     String?           @db.Text
   obs             String?           @db.Text
-  usuario_id      Int
+  user_id      Int
   avaliable_times avaliable_times[]
   images          images[]
-  users           Users             @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locals_ibfk_1")
+  users           Users             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locals_ibfk_1")
   marks           marks[]
   sports          sports[]
 
-  @@index([usuario_id], map: "usuario_id")
+  @@index([user_id], map: "user_id")
 }
 
 model marks {
@@ -51,12 +51,12 @@ model marks {
   shortDay   String @db.VarChar(8)
   hour       String @db.VarChar(20)
   local_id   Int
-  usuario_id Int
+  user_id Int
   locals     locals @relation(fields: [local_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "marks_ibfk_1")
-  users      Users  @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "marks_ibfk_2")
+  users      Users  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "marks_ibfk_2")
 
   @@index([local_id], map: "local_id")
-  @@index([usuario_id], map: "usuario_id")
+  @@index([user_id], map: "user_id")
 }
 
 model sports {
